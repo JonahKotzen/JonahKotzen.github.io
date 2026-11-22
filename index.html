@@ -305,14 +305,16 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section class="pond-sec" aria-label="Interactive pond">
   <div id="pond" class="pond">
-    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: orange carnivore tadpoles suction-feed on fairy shrimp, olive omnivore tadpoles scrape algae off the bottom, and now and then a pair of spadefoot toads in amplexus swims in to lay eggs."></canvas>
-    <div class="pond-hud wrap"><span class="mono">Tank 01 · Monsoon pond · Portal, AZ</span><span class="pond-fps" aria-hidden="true"><i></i>High-speed · 1000 fps <b class="pond-ms"></b></span></div>
+    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: tadpoles shift between omnivore and carnivore forms depending on whether they eat algae or fairy shrimp; carnivores develop faster, grow legs, reabsorb their tails on a rock and leave as toadlets, and spadefoot pairs in amplexus swim in to lay eggs."></canvas>
+    <div class="pond-hud wrap"><span class="mono">Tank 01 · Monsoon pond · Portal, AZ</span></div>
     <p class="pond-toast" role="status" aria-live="polite"></p>
   </div>
   <div class="pond-bar wrap">
-    <p class="pond-meta"><span class="hint-mouse">Carnivores suck in fairy shrimp, omnivores scrape algae, and now and then a pair of spadefoots swims in to lay eggs. Click the water to drop a shrimp.</span><span class="hint-touch">Tap the water to drop a shrimp.</span></p>
+    <p class="pond-meta"><span class="hint-mouse">Click the water to feed the nearest tadpole. Shrimp push it toward carnivore (bigger jaw muscle, sharper beak); algae push it toward omnivore (plumper, more tooth rows). Carnivores grow legs and leave the pond first.</span><span class="hint-touch">Tap the water to feed a tadpole shrimp or algae.</span></p>
     <div class="ctrls">
-            <button class="ctl" type="button" data-act="slow" aria-pressed="false">Slow-mo</button>
+            <span class="pond-meta">Drop:</span>
+      <button class="ctl" type="button" data-mode="shrimp" aria-pressed="true">Shrimp</button>
+      <button class="ctl" type="button" data-mode="algae" aria-pressed="false">Algae</button>
       <button class="ctl" type="button" data-act="pause" aria-pressed="false">Pause</button>
     </div>
   </div>
