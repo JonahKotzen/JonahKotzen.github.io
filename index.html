@@ -87,13 +87,42 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 .hero figure img{width:100%;aspect-ratio:2.1/1;object-fit:cover}
 .hero figcaption{display:flex;justify-content:space-between;gap:12px;padding-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.03em}
 
-/* now strip */
-.now{border-bottom:1px solid var(--line);background:var(--paper)}
-.now .wrap{display:grid;grid-template-columns:180px 1fr;gap:24px;padding-top:28px;padding-bottom:28px;align-items:start}
-@media (max-width:720px){ .now .wrap{grid-template-columns:1fr;gap:10px} }
-.now ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 28px}
-.now li{font-size:1rem;line-height:1.45}
-.now li b{display:block;font-family:var(--mono);font-size:.7rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+/* pond (tank 01) */
+.pond-sec{border-bottom:1px solid var(--line);padding:0;background:linear-gradient(var(--bg),var(--bg))}
+.pond{position:relative}
+.pond canvas{display:block;width:100%;height:clamp(360px,38vw,500px);touch-action:pan-y;cursor:crosshair}
+.pond-hud{position:absolute;top:12px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}
+.pond-fps{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:#C2462B;color:#fff;padding:4px 9px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;display:inline-flex;gap:8px;align-items:center}
+.pond-fps.on{opacity:1;transform:none}
+.pond-ms{text-transform:none}
+@media (max-width:600px){ .pond-hud .mono{display:none} .pond-hud{justify-content:flex-end} }
+.pond-fps i{width:7px;height:7px;border-radius:50%;background:#fff;animation:rec 1s steps(2) infinite}
+@keyframes rec{50%{opacity:.2}}
+.pond-toast{position:absolute;left:50%;bottom:16px;transform:translate(-50%,8px);margin:0;font-family:var(--mono);font-size:.78rem;background:var(--ink);color:var(--bg);padding:6px 12px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap}
+.pond-toast.on{opacity:1;transform:translate(-50%,0)}
+.pond-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-top:14px;padding-bottom:16px;border-top:1px solid var(--line)}
+.chips,.ctrls{display:flex;flex-wrap:wrap;gap:8px}
+.chip,.ctl{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.chip:hover,.chip:focus-visible,.ctl:hover{border-color:var(--ink)}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ctl[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pond-meta{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.03em}
+.pond-meta b{color:var(--ink);font-weight:500}
+.hint-touch{display:none}
+@media (hover:none){ .hint-mouse{display:none} .hint-touch{display:inline} }
+
+/* now: conveyor belt */
+.now{border-bottom:1px solid var(--line);background:var(--paper);display:flex;align-items:stretch;overflow:hidden}
+.now-label{flex:none;display:flex;align-items:center;gap:8px;padding:0 18px 0 24px;border-right:1px solid var(--line);background:var(--paper);position:relative;z-index:1;font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.now-label i{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:rec 1.4s steps(2) infinite}
+.belt{overflow:hidden;flex:1;mask-image:linear-gradient(90deg,transparent,#000 40px,#000 calc(100% - 40px),transparent)}
+.belt-track{display:flex;width:max-content;margin:0;padding:0;list-style:none;animation:belt 70s linear infinite}
+.now:hover .belt-track,.now:focus-within .belt-track{animation-play-state:paused}
+.belt-track li{white-space:nowrap;padding:14px 0;font-size:1rem;display:flex;align-items:center}
+.belt-track li::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--line);margin:0 26px}
+.belt-track li b{font-family:var(--mono);font-weight:500;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-right:10px}
+@keyframes belt{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){ .belt-track{animation:none;flex-wrap:wrap;width:auto} .belt-track li[aria-hidden]{display:none} .belt{mask-image:none} }
 
 /* sections */
 section{padding:80px 0;border-bottom:1px solid var(--line)}
@@ -107,6 +136,9 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 .project{background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column}
 .project .art{background:#0B0F0D;display:flex;align-items:center;justify-content:center;height:150px;overflow:hidden}
 .project .art img{max-height:130px;width:auto}
+.project .art.pair{gap:10px;padding:0 10px}
+.project .art.pair img{max-height:118px;max-width:47%;object-fit:contain}
+.project .art svg{height:128px;width:auto}
 .project .txt{padding:22px;display:flex;flex-direction:column;gap:10px}
 .project h3{font-size:1.3rem;font-weight:700}
 .project p{margin:0;font-size:1rem}
@@ -185,6 +217,9 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 .vid .media{background:#0B0F0D;padding:8px}
 .vid video{width:100%;aspect-ratio:16/9;object-fit:cover;background:#0B0F0D}
 .vid.wide video{object-fit:contain}
+.vid.sq video{aspect-ratio:1/1}
+.docs{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-family:var(--mono);font-size:.78rem}
+.docs span{color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .vid .cap{padding:16px}
 .vid .cap h3{font-size:1.1rem;font-weight:700;margin-bottom:4px}
 .vid .cap p{margin:0;font-size:.95rem;color:var(--muted)}
@@ -243,22 +278,51 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     </div>
     <figure>
       <img src="media/morphs.jpg" alt="Two spadefoot toad tadpoles side by side: a large carnivore morph with a wide head and a smaller omnivore morph.">
-      <figcaption><span>Carnivore · Omnivore</span><span>Same clutch</span></figcaption>
+      <figcaption><span>Carnivore · Omnivore · same clutch</span><span>Photo: <a href="https://tarheels.live/ecoevodevolab/" style="color:inherit">David Pfennig</a></span></figcaption>
     </figure>
   </div>
 </header>
 
-<!-- NOW: the one place to keep current. Update these four lines and the rest of the page can lag. -->
-<aside class="now" aria-label="What I'm working on now">
-  <div class="wrap">
-    <p class="mono">Now<br>Updated Nov 2026</p>
-    <ul>
-      <li><b>Jan 5, 2027</b>Talk at the SICB Annual Meeting in Pittsburgh on the performance basis of disruptive selection</li>
-      <li><b>Writing</b>A review on how anticipatory plasticity evolves</li>
-      <li><b>Under review</b>Jaw linkage mechanics in ray-finned fishes, with Chris Kenaley</li>
-      <li><b>In the lab</b>Mentoring undergraduate researchers in the Pfennig Lab</li>
-    </ul>
+<section class="pond-sec" aria-label="Interactive pond">
+  <div id="pond" class="pond">
+    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: orange carnivore tadpoles stalk and suction-feed on fairy shrimp, olive omnivore tadpoles scrape algae off the bottom, and a clutch of embryos develops faster when shrimp cues reach it."></canvas>
+    <div class="pond-hud wrap"><span class="mono">Tank 01 · Monsoon pond · Portal, AZ</span><span class="pond-fps" aria-hidden="true"><i></i>High-speed · 1000 fps <b class="pond-ms"></b></span></div>
+    <p class="pond-toast" role="status" aria-live="polite"></p>
   </div>
+  <div class="pond-bar wrap">
+    <div class="chips" aria-label="Highlight">
+      <button class="chip" type="button" data-focus="carn"><i style="background:#D9703F"></i>Carnivores · suction</button>
+      <button class="chip" type="button" data-focus="omni"><i style="background:#8D8A4E"></i>Omnivores · scraping</button>
+      <button class="chip" type="button" data-focus="egg"><i style="background:#E2733E;border-radius:2px"></i>Embryos · anticipation</button>
+    </div>
+    <p class="pond-meta"><span class="hint-mouse">Move into the water: you're the shrimp. Click to add more.</span><span class="hint-touch">Tap the water to add shrimp.</span>
+      <span>eaten <b data-count="eaten">0</b></span><span>algae scraped <b data-count="algae">0</b></span><span>hatched <b data-count="hatched">0</b></span></p>
+    <div class="ctrls">
+      <button class="ctl" type="button" data-act="labels" aria-pressed="false">Labels</button>
+      <button class="ctl" type="button" data-act="slow" aria-pressed="false">Slow-mo</button>
+      <button class="ctl" type="button" data-act="pause" aria-pressed="false">Pause</button>
+    </div>
+  </div>
+</section>
+
+<aside class="now" aria-label="What I'm working on now">
+  <div class="now-label"><i></i>Now</div>
+  <div class="belt"><ul class="belt-track">
+    <li><b>Jan 5, 2027</b>Talking at the SICB Annual Meeting in Pittsburgh</li>
+    <li><b>Writing</b>A review on how anticipatory plasticity evolves, with David Pfennig</li>
+    <li><b>Spring 2027</b>Next embryo experiments: which sense picks up the shrimp cue?</li>
+    <li><b>Nov 2026</b>Lunch Bunch seminar on anticipatory plasticity</li>
+    <li><b>Nov 2026</b>Poster at the regional SICB meeting at UNC</li>
+    <li><b>Mentoring</b>Undergraduate researchers in the Pfennig Lab</li>
+    <li><b>Fellowship</b>NSF GRFP, 2026–2029</li>
+    <li aria-hidden="true"><b>Jan 5, 2027</b>Talking at the SICB Annual Meeting in Pittsburgh</li>
+    <li aria-hidden="true"><b>Writing</b>A review on how anticipatory plasticity evolves, with David Pfennig</li>
+    <li aria-hidden="true"><b>Spring 2027</b>Next embryo experiments: which sense picks up the shrimp cue?</li>
+    <li aria-hidden="true"><b>Nov 2026</b>Lunch Bunch seminar on anticipatory plasticity</li>
+    <li aria-hidden="true"><b>Nov 2026</b>Poster at the regional SICB meeting at UNC</li>
+    <li aria-hidden="true"><b>Mentoring</b>Undergraduate researchers in the Pfennig Lab</li>
+    <li aria-hidden="true"><b>Fellowship</b>NSF GRFP, 2026–2029</li>
+  </ul></div>
 </aside>
 
 <main>
@@ -271,30 +335,47 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     </div>
     <div class="projects indent">
       <article class="project">
-        <div class="art"><img src="media/cartoon-030.png" alt="Illustration of a carnivore tadpole"></div>
+        <div class="art" style="background:#0B0F0D"><svg viewBox="0 0 220 140" role="img" aria-label="Illustration: spadefoot embryos in their eggs sensing chemical cues from a nearby fairy shrimp">
+          <rect x="4" y="4" width="212" height="132" rx="10" fill="#E8F1FA" stroke="#8DB4E2" stroke-width="3"/>
+          <path d="M4 112 Q60 104 110 110 T216 108 V126 a10 10 0 0 1-10 10 H14 a10 10 0 0 1-10-10Z" fill="#D9BC8C"/>
+          <g fill="none" stroke="#E2733E" stroke-width="2" stroke-dasharray="3 4" opacity=".85"><path d="M128 44 A36 36 0 0 0 112 92"/><path d="M118 34 A52 52 0 0 0 96 100"/><path d="M110 24 A68 68 0 0 0 80 106"/></g>
+          <g stroke="#5A7A99" stroke-width="1.6" fill="#ffffffcc"><circle cx="46" cy="94" r="13"/><circle cx="70" cy="98" r="12"/><circle cx="58" cy="74" r="12"/><circle cx="32" cy="74" r="11"/></g>
+          <g fill="#333"><path d="M40 94a6 6 0 1 1 9 5" stroke="#333" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="48" cy="90" r="3.4"/><path d="M64 98a6 6 0 1 1 9 5" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="72" cy="94" r="3.2"/><path d="M53 74a5 5 0 1 1 8 4" stroke="#333" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="60" cy="71" r="3"/><circle cx="32" cy="74" r="4"/></g>
+          <g transform="translate(150 40) rotate(-8)"><path d="M-30 0 Q-14 3 0 0" stroke="#E59A6C" stroke-width="3.4" fill="none" stroke-linecap="round"/><ellipse cx="9" cy="0" rx="13" ry="4.4" fill="#E59A6C"/><g stroke="#C9764B" stroke-width="1.6" stroke-linecap="round"><path d="M16-2v-8M12-2l-1-8M8-2l-2-8M4-2l-3-7M0-2l-3-6"/></g><path d="M-30 0l-8-4M-30 0l-8 3" stroke="#C2462B" stroke-width="1.6"/><path d="M21 0l5 4" stroke="#E59A6C" stroke-width="1.6"/><circle cx="27" cy="5" r="2.4" fill="#111"/></g>
+          <g transform="translate(172 96)"><circle r="15" fill="#fff" stroke="#18201D" stroke-width="2"/><path d="M0-9V0l6 4" stroke="#D9533A" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>
+        </svg></div>
         <div class="txt">
-          <span class="tag">Development</span>
+          <span class="tag">Anticipatory plasticity</span>
           <h3>How development forecasts the future</h3>
-          <p>Embryos exposed to fairy shrimp cues hatched faster than controls. I'm testing whether developing tadpoles use early cues to prepare for the pond they will hatch into, and reviewing how anticipatory plasticity evolves.</p>
-          <p class="stat">F1–F4 cue experiments · SWRS 2026</p>
+          <p>Spadefoot embryos share their pond with fairy shrimp for about two days before they can eat them. In my experiments, embryos that only sensed baby shrimp hatched larger, while embryos bumped by adult shrimp hatched earlier and smaller. Next: what they sense, and how anticipation evolves from ordinary responsive plasticity.</p>
+          <p class="stat">Lab colony + wild SWRS families · review in prep with D. Pfennig</p>
         </div>
       </article>
       <article class="project">
-        <div class="art"><img src="media/cartoon-054.png" alt="Illustration of a carnivore tadpole sucking in a fairy shrimp"></div>
+        <div class="art pair"><img src="media/cartoon-054.png" alt="Illustration of a carnivore tadpole suction-feeding on a fairy shrimp"><img src="media/cartoon-058.png" alt="Illustration of an omnivore tadpole scraping algae"></div>
         <div class="txt">
           <span class="tag">Biomechanics</span>
           <h3>The performance basis of disruptive selection</h3>
-          <p>Why are intermediate tadpoles less fit? Using high-speed video of suction strikes on fairy shrimp and scraping bouts on algae, I'm testing whether intermediates are worse than each specialist at that specialist's job.</p>
-          <p class="stat">149 tadpoles · 1000+ fps · lateral + ventral views · DLTdv8 · microCT (UNC BRIC) · <a href="#videos">watch the footage</a></p>
+          <p>Why are intermediate tadpoles less fit? I built a 1,000 fps filming rig with a 45° mirror for lateral and ventral views at once, then filmed tadpoles striking fairy shrimp and scraping algae, to test whether intermediates do worse than each specialist at its own job.</p>
+          <p class="stat">149 tadpoles · carnivores, omnivores, intermediates &amp; <i>S. couchii</i> · DLTdv8 · with T. Hedrick · <a href="#videos">watch</a></p>
         </div>
       </article>
       <article class="project">
-        <div class="art"><img src="media/cartoon-058.png" alt="Illustration of an omnivore tadpole scraping algae"></div>
+        <div class="art" style="background:#0B0F0D"><svg viewBox="0 0 220 140" role="img" aria-label="Illustration: fairy shrimp hatching from dormant eggs in a pond sediment core, with a carnivore tadpole nearby">
+          <rect x="4" y="4" width="212" height="132" rx="10" fill="#E8F1FA" stroke="#8DB4E2" stroke-width="3"/>
+          <path d="M4 78 Q70 70 120 76 T216 74 V126 a10 10 0 0 1-10 10 H14 a10 10 0 0 1-10-10Z" fill="#D9BC8C"/>
+          <path d="M4 100 Q80 94 216 100 V126 a10 10 0 0 1-10 10 H14 a10 10 0 0 1-10-10Z" fill="#B89463"/>
+          <g transform="translate(150 60)"><rect x="-13" y="0" width="26" height="74" rx="3" fill="#ffffff55" stroke="#18201D" stroke-width="2"/><path d="M-12 22h24M-12 44h24" stroke="#7a5a35" stroke-width="1.4"/></g>
+          <g fill="#7A4E26"><circle cx="146" cy="86" r="2.2"/><circle cx="155" cy="94" r="2.2"/><circle cx="148" cy="108" r="2.2"/><circle cx="154" cy="120" r="2.2"/><circle cx="40" cy="92" r="2"/><circle cx="72" cy="108" r="2"/><circle cx="96" cy="88" r="2"/><circle cx="24" cy="116" r="2"/></g>
+          <path d="M150 58 q-4-12 2-22" stroke="#E2733E" stroke-width="1.6" stroke-dasharray="2 3" fill="none"/>
+          <g transform="translate(160 30) rotate(-20) scale(.85)"><path d="M-30 0 Q-14 3 0 0" stroke="#E59A6C" stroke-width="3.4" fill="none" stroke-linecap="round"/><ellipse cx="9" cy="0" rx="13" ry="4.4" fill="#E59A6C"/><g stroke="#C9764B" stroke-width="1.6" stroke-linecap="round"><path d="M16-2v-8M12-2l-1-8M8-2l-2-8M4-2l-3-7M0-2l-3-6"/></g><path d="M-30 0l-8-4M-30 0l-8 3" stroke="#C2462B" stroke-width="1.6"/><circle cx="27" cy="5" r="2.4" fill="#111"/></g>
+          <g transform="translate(62 44)"><path d="M-18 0 C-34 -10 -44 8 -58 -2" stroke="#EBA57A" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse rx="22" ry="16" fill="#D9703F" stroke="#7A3A1E" stroke-width="1.6"/><ellipse cx="6" cy="3" rx="8" ry="6" fill="#A0321E" opacity=".55"/><circle cx="10" cy="-6" r="3" fill="#111"/><path d="M19 4 l3 2 l3-3" stroke="#111" stroke-width="1.8" fill="none"/></g>
+        </svg></div>
         <div class="txt">
-          <span class="tag">Coevolution</span>
+          <span class="tag">Predator &amp; prey</span>
           <h3>Spadefoots and fairy shrimp</h3>
-          <p>With Sheila Patek, I'm asking how fairy shrimp evolve alongside carnivore presence and pond ephemerality, and whether predator and prey shape each other's anticipatory responses.</p>
-          <p class="stat">Collaboration · Duke University</p>
+          <p>Fairy shrimp eggs wait out the dry season in pond mud. With Sheila Patek, I'm hatching shrimp from Arizona pond sediment to ask how they evolve in ponds where carnivores are common and the water vanishes fast.</p>
+          <p class="stat">Sediment cores · common-garden hatching · with S. Patek (Duke)</p>
         </div>
       </article>
     </div>
@@ -342,7 +423,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
           <h3>The performance basis of disruptive selection in spadefoot toad tadpoles</h3>
           <p>Kotzen, Hedrick &amp; Pfennig · Regional SICB meeting, UNC Chapel Hill</p>
           <p>Half a vacuum plus half a rake: are intermediate tadpoles a decent multitool, or bad at both jobs?</p>
-          <a class="btn ghost" href="media/poster.jpg">View full poster</a>
+          <a class="btn ghost" href="media/docs/sicb-2026-poster.pdf">View full poster (PDF)</a>
         </div>
       </div>
     </div>
@@ -406,18 +487,13 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       </article>
       <article class="card">
         <span class="tag">Leadership</span>
-        <h3>Biology Graduate Student Association</h3>
-        <p>As president, I represent UNC Biology grad students to the department, including programming the 2026 department retreat.</p>
+        <h3><a href="https://bgsa.web.unc.edu/people/">Biology Graduate Student Association</a></h3>
+        <p>As president, I represent UNC Biology grad students to the department, including programming the 2026 department retreat. Before that, I was BGSA's GPSG senate representative.</p>
       </article>
       <article class="card">
         <span class="tag">Outreach</span>
-        <h3>Carolina Biodiversity Collaborative</h3>
+        <h3><a href="https://cbc.unc.edu/">Carolina Biodiversity Collaborative</a></h3>
         <p>I run the CBC website and listserv and coordinate a campus flyer campaign that puts biodiversity facts up around UNC.</p>
-      </article>
-      <article class="card">
-        <span class="tag">Service</span>
-        <h3>Graduate curriculum working group</h3>
-        <p>I'm helping start a working group for open discussion of graduate courses in the department.</p>
       </article>
     </div>
   </div>
@@ -428,31 +504,34 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <div class="sec-head"><p class="mono">05 / CV</p><h2>Curriculum vitae</h2></div>
     <div class="indent">
       <div class="cv-row">
-        <!-- When the PDF is ready: add media/Kotzen_CV.pdf to the repo and change href to "media/Kotzen_CV.pdf" -->
-        <a class="btn" href="mailto:jkotzen@unc.edu?subject=CV%20request">Request full CV</a>
+        <a class="btn" href="media/docs/Kotzen_CV.pdf">Download CV (PDF)</a>
         <a class="btn ghost" href="https://orcid.org/0009-0006-8403-7370">ORCID 0009-0006-8403-7370</a>
       </div>
+      <p class="docs"><span>Proposals</span>
+        <a href="media/docs/grfp-2026-research-plan.pdf">NSF GRFP research plan · 2026 fellowship</a>
+        <a href="media/docs/grfp-2025-research-plan.pdf">NSF GRFP research plan · 2025 honorable mention</a>
+        <a href="media/docs/swrs-2026-proposal.pdf">SWRS field research award proposal · 2026</a></p>
       <div class="facts">
         <div class="fact"><b>Education</b>
           <span>PhD, Evolution, Ecology &amp; Organismal Biology, UNC Chapel Hill, expected 2030. Advisor: <a href="https://tarheels.live/ecoevodevolab/">David Pfennig</a></span>
           <span>BS Biology &amp; BA Classical Studies, Boston College, 2024, summa cum laude</span></div>
         <div class="fact"><b>Grants &amp; fellowships</b>
-          <span>NSF Graduate Research Fellowship, 2026–2029</span>
-          <span>SWRS Graduate Field Research Award (AMNH), 2026</span>
+          <span><a href="media/docs/grfp-2026-research-plan.pdf">NSF Graduate Research Fellowship</a>, 2026–2029</span>
+          <span><a href="media/docs/swrs-2026-proposal.pdf">SWRS Graduate Field Research Award</a> (AMNH), 2026</span>
           <span>NSF GRFP Honorable Mention, 2025</span></div>
         <div class="fact"><b>Teaching</b>
-          <span>TA, Evolutionary Mechanisms Lab (BIOL 471L), UNC, 2026</span>
-          <span>TA, Animal Behavior Lab (BIOL 278L), UNC, 2025</span>
+          <span>TA, Evolutionary Mechanisms Lab (BIOL 471L), UNC, Spring 2026</span>
+          <span>TA, Animal Behavior Lab (BIOL 278L), UNC, Fall 2025</span>
           <span>TA, Ecology &amp; Evolution (250+ students), Boston College, 2022</span></div>
         <div class="fact"><b>Honors</b>
           <span>Phi Beta Kappa · Max Wainer Prize in Classics · Harry W. Smith Award</span>
           <span>Fulbright semi-finalist · Truman Scholarship finalist</span></div>
         <div class="fact"><b>Leadership &amp; service</b>
-          <span>President, UNC Biology Graduate Student Association</span>
-          <span>Website administrator, Carolina Biodiversity Collaborative</span>
+          <span>President, UNC Biology Graduate Student Association, 2026–</span>
+          <span>Website administrator, Carolina Biodiversity Collaborative, 2026–</span>
           <span>Student Body President, Boston College (UGBC)</span></div>
         <div class="fact"><b>Methods</b>
-          <span>High-speed videography · DLTdv8 · microCT &amp; 3D Slicer/SlicerMorph · geometric morphometrics · biomechanical modeling · R · Fiji/ImageJ</span>
+          <span>High-speed videography (1,000+ fps, mirror-based dual view) · DLTdv8 · microCT &amp; 3D Slicer/SlicerMorph · geometric morphometrics · biomechanical modeling · R · Fiji/ImageJ</span>
           <span>BARC Microscopy Image Analysis Workshop, 2025</span></div>
       </div>
     </div>
@@ -463,6 +542,8 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   <div class="wrap">
     <div class="sec-head"><p class="mono">06 / Press</p><h2>In the news</h2></div>
     <div class="entries indent">
+      <div class="entry"><div class="when">May 2026</div><div class="what"><strong><a href="https://www.unc.edu/posts/2026/05/18/23-student-researchers-receive-2026-nsf-fellowships/">23 student researchers receive 2026 NSF fellowships</a></strong><span class="meta">UNC-Chapel Hill</span></div></div>
+      <div class="entry"><div class="when">2025</div><div class="what"><strong><a href="https://bio.unc.edu/news/graduate-student-appreciation-week-2025-nsf-grfp-awardees-honorable-mentions/">Graduate Student Appreciation Week 2025: NSF GRFP awardees &amp; honorable mentions</a></strong><span class="meta">UNC Department of Biology · honorable mention</span></div></div>
       <div class="entry"><div class="when">May 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/seniors-2024.html">Seniors to Remember</a></strong><span class="meta">Boston College News</span></div></div>
       <div class="entry"><div class="when">Feb 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/profile-of-ugbc-president-jonah-kotzen.html">UGBC president Jonah Kotzen reflects on years at the Heights</a></strong><span class="meta">Boston College News · profile</span></div></div>
       <div class="entry"><div class="when">Nov 2023</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2023/fall/gratitude.html">Gratitude</a></strong><span class="meta">Boston College · Thanksgiving video, narrator</span></div></div>
@@ -509,15 +590,15 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles scraping algae and striking at fairy shrimp"></video></div>
         <div class="cap"><h3>Scraping and striking at 1,000 frames per second</h3><p>Tadpoles rasping algae (slowed 17×), then lunging at fairy shrimp (slowed 167×). This is the raw material for my performance measurements.</p></div>
       </article>
-      <article class="vid">
+      <article class="vid sq">
         <div class="media"><video src="media/jaw-closeup.mp4" poster="media/jaw-closeup-poster.jpg" autoplay muted loop playsinline aria-label="Slow-motion close-up of a tadpole's jaws working at the bottom of a tank, side view"></video></div>
-        <div class="cap"><h3>Jaws up close</h3><p>A side-on look at the beak and labial teeth in slow motion.</p></div>
+        <div class="cap"><h3>Jaws up close</h3><p>A side-on look at a tadpole working its beak along the bottom of the tank, in slow motion.</p></div>
       </article>
-      <article class="vid">
+      <article class="vid sq">
         <div class="media"><video src="media/tadpole-headon.mp4" poster="media/tadpole-headon-poster.jpg" autoplay muted loop playsinline aria-label="A spadefoot tadpole swimming toward the camera in a clear tank"></video></div>
         <div class="cap"><h3>Head-on</h3><p>A spadefoot tadpole swims up to the glass in the filming tank.</p></div>
       </article>
-      <article class="vid">
+      <article class="vid sq">
         <div class="media"><video src="media/shrimp-cue.mp4" autoplay muted loop playsinline aria-label="Fairy shrimp swimming among spadefoot embryos"></video></div>
         <div class="cap"><h3>Shrimp ahead</h3><p>Spadefoot embryos developing alongside live shrimp, the cue in my anticipatory plasticity experiments.</p></div>
       </article>
@@ -556,6 +637,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </footer>
 
+<script src="pond.js" defer></script>
 <script>
 (function(){
   const c = document.getElementById('ripples'); if(!c) return;
