@@ -27,12 +27,16 @@
   }
 
   /* ---------- geometry ---------- */
-  function floorY(x) { const u = Math.abs((x - W / 2) / (W / 2)); return surfaceY + depth * (1 - Math.pow(Math.min(u, 1), 3.2)) - (u > 0.9 ? (u - 0.9) * H * 0.6 : 0); }
+  function floorY(x) {
+    const u = Math.min(1, Math.abs((x - W / 2) / (W / 2))), lip = 22 * SC;
+    if (u < 0.5) return surfaceY + lip + (depth - lip) * (1 - Math.pow(u / 0.5, 2.2));
+    if (u < 0.8) return surfaceY + lip * (1 - (u - 0.5) / 0.3) * 1.0 + Math.sin(u * 40) * 1.2;   // wide, shallow muddy beach
+    return surfaceY - ((u - 0.8) / 0.2) * H * 0.16;                                            // dry bank
+  }
   const inWater = (x) => floorY(x) > surfaceY + 24;
   const bounds = (x, pad) => ({ top: surfaceY + 10 + pad, bot: floorY(clamp(x, 0, W)) - pad });
-  function shoreX(side) { // x where the bank meets the waterline
-    let x = side < 0 ? W * 0.05 : W * 0.95;
-    while (floorY(x) < surfaceY + 2 && x > 0 && x < W) x -= side * 2;
+  function shoreX(side, d) { // x on the shelf where the water is d px deep
+    let x = W / 2; while (floorY(x) > surfaceY + d && x > 2 && x < W - 2) x += side * 2;
     return x;
   }
 
@@ -41,13 +45,12 @@
     W = Math.round(r.width); H = Math.round(cv.getBoundingClientRect().height);
     const DPR = Math.min(2, window.devicePixelRatio || 1);
     cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    SC = W < 600 ? 0.82 : clamp(W / 1000, 0.8, 1.3);
-    surfaceY = H * (W < 600 ? 0.2 : 0.17); depth = H * 0.72;
+    SC = W < 600 ? 0.72 : clamp(W / 1150, 0.7, 1.1);
+    surfaceY = H * 0.3; depth = H * 0.6;
     tufts = [];
     for (let x = W * 0.08; x < W * 0.92; x += 15 * SC) if (floorY(x) - surfaceY > 50) tufts.push({ x: x + rnd(-4, 4), b: rnd(0.6, 1), sway: rnd(0, TAU) });
     specks = Array.from({ length: Math.round(W / 14) }, () => ({ x: rnd(0, W), y: rnd(surfaceY, H), r: rnd(0.5, 1.6), v: rnd(2, 7) }));
     cysts = Array.from({ length: Math.round(W / 22) }, () => ({ x: rnd(W * 0.12, W * 0.88), d: rnd(6, 34) }));
-    rocks = [-1, 1].map(side => { const x = shoreX(side) + side * -14 * SC; return { x, y: surfaceY + 6 * SC, r: 16 * SC, side }; });
   }
 
   /* ---------- creatures ---------- */
@@ -63,7 +66,7 @@
     tads = [makeTad(W * 0.35, surfaceY + depth * 0.35, 0.85, 0.45), makeTad(W * 0.6, surfaceY + depth * 0.4, 0.75, 0.3),
             makeTad(W * 0.45, surfaceY + depth * 0.6, 0.15, 0.4), makeTad(W * 0.7, surfaceY + depth * 0.55, 0.2, 0.25), makeTad(W * 0.28, surfaceY + depth * 0.6, 0.3, 0.15)];
     shrimp = [];
-    for (let i = 0; i < 7; i++) shrimp.push(makeShrimp(rnd(W * 0.15, W * 0.85), rnd(surfaceY + 30, surfaceY + depth * 0.6), i < 4));
+    for (let i = 0; i < 7; i++) shrimp.push(makeShrimp(rnd(W * 0.3, W * 0.7), rnd(surfaceY + 30, surfaceY + depth * 0.6), i < 4));
     eggs = []; food = []; toadlets = []; pair = null; pairT = 8;
   }
 
@@ -75,7 +78,7 @@
   }
   function wander(o, speed, dt) {
     o.t -= dt;
-    if (o.t <= 0 || !o.wp) { o.t = rnd(2, 5); const x = rnd(W * 0.14, W * 0.86), b = bounds(x, 24); o.wp = { x, y: rnd(b.top + 8, Math.max(b.top + 10, b.bot - 8)) }; }
+    if (o.t <= 0 || !o.wp) { o.t = rnd(2, 5); let x = rnd(W * 0.14, W * 0.86); while (!inWater(x)) x += x < W / 2 ? 4 : -4; const b = bounds(x, 24); o.wp = { x, y: rnd(b.top + 8, Math.max(b.top + 10, b.bot - 8)) }; }
     steer(o, o.wp.x, o.wp.y, speed, 1.6, dt);
   }
   function integrate(o, dt, s) {
@@ -105,7 +108,7 @@
       const b = bounds(s.x, 6);
       if (s.y < b.top) { s.y = b.top; s.heading = Math.abs(s.heading); }
       if (s.y > b.bot) { s.y = b.bot; s.heading = -Math.abs(s.heading); }
-      if (!inWater(s.x) || s.x < W * 0.07 || s.x > W * 0.93) { s.x = clamp(s.x, W * 0.08, W * 0.92); s.heading = Math.PI - s.heading; s.vx *= -1; }
+      if (!inWater(s.x)) { while (!inWater(s.x)) s.x += s.x < W / 2 ? 3 : -3; s.heading = Math.PI - s.heading; s.vx *= -1; }
       if (Math.abs(s.vx) > 1) s.face = s.vx >= 0 ? 1 : -1;
       s.pitch = lerp(s.pitch, clamp(Math.atan2(s.vy, Math.abs(s.vx) + 1e-3), -0.6, 0.6), 1 - Math.exp(-4 * dt));
     });
@@ -134,17 +137,17 @@
     toadlets = toadlets.filter(k => !k.gone);
     specks.forEach(p => { p.y -= p.v * dt * 0.3; if (p.y < surfaceY) p.y = floorY(p.x) - 2; });
     fx.forEach(f => f.t += dt); fx = fx.filter(f => f.t < (f.life || 0.8));
-    if (selected && (!tads.includes(selected) || selected.state === 'meta' || selected.state === 'perch')) selected = null;
+    if (selected && (!tads.includes(selected) || ['meta', 'emerge', 'hop'].includes(selected.state))) selected = null;
   }
 
   function tadpole(t, dt) {
     const s = sizeOf(t);
     t.age += dt;
     // carnivores develop faster: they're the ones racing a drying pond
-    if (t.state !== 'perch') t.dev = Math.min(1, t.dev + dt * (0.007 + 0.03 * t.c * t.c));
+    if (t.state !== 'emerge' && t.state !== 'hop') t.dev = Math.min(1, t.dev + dt * (0.007 + 0.03 * t.c * t.c));
     t.phase += dt * (t.state === 'strike' ? 22 : t.state === 'graze' ? 6 : 8);
 
-    if (t.dev > 0.9 && t.state !== 'meta' && t.state !== 'perch') { if (t.target) t.target.claim = null; t.state = 'meta'; t.target = null; t.rock = rocks.reduce((a, r) => Math.abs(r.x - t.x) < Math.abs(a.x - t.x) ? r : a); }
+    if (t.dev > 0.9 && !['meta', 'emerge', 'hop'].includes(t.state)) { if (t.target) t.target.claim = null; t.state = 'meta'; t.target = null; t.side = t.x < W / 2 ? -1 : 1; }
 
     if (t.state === 'wander') {
       t.gape = lerp(t.gape, 0, 1 - Math.exp(-10 * dt));
@@ -187,14 +190,20 @@
       if (Math.random() < dt * 5) { const m = mouthOf(t); fx.push({ kind: 'bit', x: m.x, y: m.y, vx: rnd(-10, 10), vy: rnd(-18, -6), t: 0 }); }
       t.t -= dt;
       if (t.t <= 0 || (f.left !== undefined ? f.left <= 0 : f.b < 0.1)) { t.state = 'wander'; t.target = null; t.cool = rnd(2, 5); t.gape = 0; t.wp = null; }
-    } else if (t.state === 'meta') { // legs out: head for a rock at the shore
-      const r = t.rock; steer(t, r.x, r.y + s * 0.2, 26 * SC, 2.4, dt);
-      t.gape = 0;
-      if (Math.hypot(t.x - r.x, t.y - (r.y + s * 0.2)) < s) { t.state = 'perch'; t.t = 0; t.vx = t.vy = 0; t.face = -r.side; }
-    } else if (t.state === 'perch') { // half in, half out, reabsorbing the tail
-      t.x = lerp(t.x, t.rock.x, 0.1); t.y = lerp(t.y, t.rock.y - s * 0.15, 0.1); t.pitch = lerp(t.pitch, -0.25, 0.1);
-      t.tail = Math.max(0, t.tail - dt / 7); t.dev = 1;
-      if (t.tail <= 0) { t.fade = 0; toadlets.push({ x: t.x, y: t.y, dir: t.rock.side, t: 0, s: s * 0.55 }); }
+    } else if (t.state === 'meta') { // legs out: swim for the shallows
+      const tx = shoreX(t.side, s * 1.6), ty = floorY(tx) - s * 0.8;
+      steer(t, tx, ty, 26 * SC, 2.4, dt); t.gape = 0;
+      if (Math.hypot(t.x - tx, t.y - ty) < s * 0.9) { t.state = 'emerge'; t.k = 0; t.face = t.side; }
+    } else if (t.state === 'emerge') { // crawl up the muddy shelf, half in the water, reabsorbing the tail
+      t.k = Math.min(1, t.k + dt / 9);
+      const stop = shoreX(t.side, -6 * SC);
+      if (Math.abs(t.x - stop) > 2) t.x += t.side * 5 * SC * dt;
+      t.y = floorY(t.x) - sizeOf(t) * 0.55; t.tail = 1 - t.k;
+      if (t.k >= 1) { t.state = 'hop'; t.t = 0; }
+      return;
+    } else if (t.state === 'hop') { // now a toadlet: hop up the bank and away
+      t.t += dt; t.x += t.side * 30 * SC * dt; t.y = floorY(clamp(t.x, 0, W)) - sizeOf(t) * 0.45 - Math.abs(Math.sin(t.t * 4)) * 12 * SC;
+      if (t.x < -30 || t.x > W + 30) t.fade = 0;
       return;
     }
     if (t.state !== 'perch') integrate(t, dt, s);
@@ -223,7 +232,7 @@
     ctx.fillStyle = P.ray;
     for (let i = 0; i < 6; i++) { const x0 = W * (0.12 + i * 0.15) + Math.sin(time * 0.3 + i) * 30; ctx.beginPath(); ctx.moveTo(x0, surfaceY); ctx.lineTo(x0 + 40, surfaceY); ctx.lineTo(x0 + 120, surfaceY + depth); ctx.lineTo(x0 + 50, surfaceY + depth); ctx.fill(); }
     ctx.fillStyle = P.speck; specks.forEach(p => { if (p.y > surfaceY + 2 && p.y < floorY(p.x)) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); } });
-    drawMud(); tufts.forEach(drawTuft); drawRocks(); food.forEach(drawFood); drawEggs();
+    drawMud(); tufts.forEach(drawTuft); food.forEach(drawFood); drawEggs();
     tads.filter(t => t.c < 0.5).forEach(drawTad); shrimp.forEach(drawShrimp); tads.filter(t => t.c >= 0.5).forEach(drawTad);
     tads.forEach(t => { if (t.state === 'strike') drawFlow(t); });
     if (pair) { const d = pair.state === 'leave' ? -pair.dir : pair.dir; drawToad(pair.x, pair.y, 24 * SC, d); drawToad(pair.x - d * 5 * SC, pair.y - 16 * SC, 18 * SC, d); }
@@ -250,7 +259,33 @@
   }
   function drawFood(f) { ctx.fillStyle = P.algae; for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(f.x + Math.cos(i * 1.3) * 4 * SC, f.y + Math.sin(i * 1.9) * 3 * SC, (2 + 2 * f.left) * SC, 0, TAU); ctx.fill(); } }
 
+  function drawFroglet(t) {
+    const k = t.state === 'hop' ? 1 : t.k, s = sizeOf(t) * lerp(1, 0.72, k);
+    const body = mix(mix('#8D8A4E', '#D9703F', t.c), '#7B8A55', k);
+    const slope = Math.atan2(floorY(t.x + t.side * 6) - floorY(t.x - t.side * 6), 12) * t.side;
+    ctx.save(); ctx.translate(t.x, t.y); ctx.scale(t.side, 1); ctx.rotate(slope);
+    // tail stub, shrinking
+    if (k < 1) { const L = s * 2.4 * (1 - k); ctx.fillStyle = body; ctx.beginPath(); ctx.moveTo(-s * 0.7, -s * 0.18); ctx.quadraticCurveTo(-s * 0.7 - L * 0.6, -s * 0.1 + Math.sin(time * 3) * 2, -s * 0.7 - L, 0); ctx.quadraticCurveTo(-s * 0.7 - L * 0.6, s * 0.12, -s * 0.7, s * 0.2); ctx.fill();
+      ctx.fillStyle = 'rgba(190,185,140,0.45)'; ctx.beginPath(); ctx.moveTo(-s * 0.7, -s * 0.2); ctx.quadraticCurveTo(-s * 0.7 - L * 0.5, -s * 0.55 * (1 - k), -s * 0.7 - L, 0); ctx.quadraticCurveTo(-s * 0.7 - L * 0.5, s * 0.45 * (1 - k), -s * 0.7, s * 0.2); ctx.fill(); }
+    ctx.strokeStyle = '#3E4A2A'; ctx.lineWidth = 1; ctx.fillStyle = body;
+    // hind leg (folded frog leg) + foot
+    ctx.beginPath(); ctx.ellipse(-s * 0.35, s * 0.3, s * 0.55, s * 0.28, 0.35, 0, TAU); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = body; ctx.lineWidth = s * 0.14; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-s * 0.05, s * 0.5); ctx.lineTo(-s * 0.55, s * 0.62); ctx.lineTo(-s * 0.15, s * 0.66); ctx.stroke();
+    ctx.lineWidth = s * 0.11; ctx.beginPath(); ctx.moveTo(s * 0.45, s * 0.25); ctx.lineTo(s * 0.6, s * 0.62); ctx.stroke(); // foreleg
+    // body morphs from round tadpole to squat toad
+    ctx.fillStyle = body; ctx.strokeStyle = '#3E4A2A'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.ellipse(0, 0, s * lerp(0.95, 1.05, k), s * lerp(0.75, 0.6, k), 0, 0, TAU); ctx.fill(); ctx.stroke();
+    if (t.c > 0.3) { ctx.fillStyle = `rgba(160,50,30,${(0.25 + 0.4 * t.c) * (1 - k)})`; ctx.beginPath(); ctx.ellipse(s * 0.3, s * 0.12, s * 0.3, s * 0.22, 0.3, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = '#C9A227'; ctx.beginPath(); ctx.arc(s * 0.55, -s * 0.48, s * 0.19, 0, TAU); ctx.fill(); ctx.strokeStyle = '#3E4A2A'; ctx.stroke();
+    ctx.fillStyle = '#111'; ctx.fillRect(s * 0.44, -s * 0.5, s * 0.22, Math.max(1.2, s * 0.06));
+    ctx.strokeStyle = '#2A2A1A'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s * 0.98, s * 0.05); ctx.quadraticCurveTo(s * 0.7, s * 0.22, s * 0.4, s * 0.15); ctx.stroke(); // wide toad mouth
+    ctx.restore();
+    if (W > 600) { ctx.font = `${Math.round(10 * Math.max(SC, 0.9))}px ${mono}`; ctx.textAlign = 'center'; ctx.fillStyle = P.ink; ctx.globalAlpha = 0.75;
+      ctx.fillText(k < 1 ? 'metamorph · tail shrinking' : 'toadlet', t.x, t.y - s * 1.4); ctx.globalAlpha = 1; }
+  }
+
   function drawTad(t) {
+    if (t.state === 'emerge' || t.state === 'hop') return drawFroglet(t);
     const s = sizeOf(t), c = t.c;
     ctx.save(); ctx.globalAlpha = t.fade; ctx.translate(t.x, t.y); ctx.scale(t.face, 1); ctx.rotate(t.pitch);
     const meta = Math.max(0, (t.dev - 0.9) / 0.1);
@@ -367,8 +402,9 @@
     const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     if (!inWater(x) || y < surfaceY) return;
     const yy = Math.min(y, floorY(x) - 8);
-    const near = tads.filter(t => t.state !== 'meta' && t.state !== 'perch').sort((a, b) => Math.hypot(a.x - x, a.y - yy) - Math.hypot(b.x - x, b.y - yy))[0];
+    const near = tads.filter(t => !['meta', 'emerge', 'hop'].includes(t.state)).sort((a, b) => Math.hypot(a.x - x, a.y - yy) - Math.hypot(b.x - x, b.y - yy))[0];
     if (mode === 'shrimp') {
+      if (shrimp.length >= 14) { const old = shrimp.find(o => !o.claim && !o.sucked); if (old) old.alive = false; }
       const s = makeShrimp(x, yy, true); shrimp.push(s);
       if (near && sizeOf(near) * 1.4 >= shrimpL(s)) { if (near.target && near.target.claim) near.target.claim = null; near.target = s; s.claim = near; near.state = 'hunt'; }
       else if (near) { s.grow = 0.2; if (near.target && near.target.claim) near.target.claim = null; near.target = s; s.claim = near; near.state = 'hunt'; }
