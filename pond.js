@@ -17,7 +17,7 @@
   let W = 0, H = 0, DPR = 1, SC = 1, surfaceY = 0, depth = 0;
   let mono = 'monospace', dark = false, P = {};
   let time = 0, timeScale = 1, targetScale = 1, running = false, visible = false, paused = false;
-  let manualSlow = false, labelsOn = false, introT = 7, focus = null; // focus: 'carn'|'omni'|'egg'|null
+  let manualSlow = false, labelsOn = false, introT = 0, focus = null; // focus: 'carn'|'omni'|'egg'|null
   let slowMoUntil = 0, lastAutoSlow = -99, strikeHud = null;
   const stats = { eaten: 0, algae: 0, hatched: 0 };
 
@@ -51,7 +51,7 @@
   /* ---------- world ---------- */
   let tufts = [], shrimp = [], tads = [], eggs = [], rings = [], specks = [], fx = [], toadlets = [], cysts = [];
   let cursor = { on: false, x: 0, y: 0, sh: null, respawnAt: 0 };
-  let clutchX = 0, cue = 0, clutchResetAt = 0;
+  let clutchX = 0, cue = 0, clutchResetAt = 0, pair = null, pairT = 6;
 
   function resize() {
     const r = wrap.getBoundingClientRect();
@@ -74,7 +74,7 @@
     for (let i = 0; i < nC; i++) tads.push(makeTad('carn', rnd(W * 0.3, W * 0.85), rnd(surfaceY + 50, surfaceY + depth * 0.6)));
     for (let i = 0; i < nO; i++) tads.push(makeTad('omni', rnd(W * 0.25, W * 0.8), rnd(surfaceY + 60, surfaceY + depth * 0.7)));
     for (let i = 0; i < nS; i++) shrimp.push(makeShrimp(rnd(W * 0.15, W * 0.85), rnd(surfaceY + 30, surfaceY + depth * 0.7)));
-    newClutch();
+    eggs = [];
   }
 
   function makeTad(type, x, y) {
@@ -137,8 +137,7 @@
     time += dt;
     if (introT > 0) introT -= dt / Math.max(timeScale, 0.05);
 
-    // cursor shrimp follows pointer
-    if (cursor.on) {
+    if (false) {
       if (!cursor.sh && time > cursor.respawnAt) { cursor.sh = makeShrimp(cursor.x, cursor.y, true); shrimp.push(cursor.sh); }
       const s = cursor.sh;
       if (s && s.alive && !s.sucked) {
@@ -174,7 +173,7 @@
       s.pitch = lerp(s.pitch, clamp(Math.atan2(s.vy, Math.abs(s.vx) + 1e-3), -0.6, 0.6), 1 - Math.exp(-4 * dt));
       // chemical cue rings
       s.cueT -= dt;
-      if (s.cueT <= 0) { s.cueT = 1.4; rings.push({ x: s.x, y: s.y, r: 2, a: 1 }); }
+
     });
     shrimp = shrimp.filter(s => s.alive);
     if (cursor.sh && !cursor.sh.alive) cursor.sh = null;
@@ -203,25 +202,20 @@
     // algae regrows slowly
     tufts.forEach(f => { f.b = Math.min(1, f.b + dt * 0.012); });
 
-    // embryos: development speeds up with shrimp cues
-    let c = 0; const ey = floorY(clutchX) - 14 * SC;
-    shrimp.forEach(s => { const d = Math.hypot(s.x - clutchX, s.y - ey); c += Math.exp(-Math.pow(d / (170 * SC), 2)); });
-    rings.forEach(r => { const d = Math.hypot(r.x - clutchX, r.y - ey); if (Math.abs(d - r.r) < 10) c += 0.15 * r.a; });
-    cue = lerp(cue, clamp(c, 0, 1), 1 - Math.exp(-1.5 * dt));
-    let left = 0;
+    // now and then a pair of spadefoots in amplexus swims in and lays eggs
+    pairT -= dt;
+    if (pairT <= 0 && !pair) { const dir = Math.random() < 0.5 ? 1 : -1, ex = dir > 0 ? W * 0.07 : W * 0.93;
+      pair = { x: ex, y: floorY(ex) - 6, dir, state: 'enter', t: 0, tx: dir > 0 ? rnd(W * 0.22, W * 0.4) : rnd(W * 0.6, W * 0.78), laid: 0 }; }
+    if (pair) amplex(pair, dt);
     eggs.forEach(e => {
       if (e.done) { e.pop += dt; return; }
-      left++;
-      e.p += dt * (0.02 + 0.07 * cue);
-      e.spin += dt * (0.6 + 4 * cue) * (0.5 + e.p);
+      e.p += dt / 28; e.spin += dt * 0.8;
       if (e.p >= 1) hatch(e);
     });
-    if (!left && !clutchResetAt) clutchResetAt = time + 9;
-    if (clutchResetAt && time > clutchResetAt) newClutch();
+    eggs = eggs.filter(e => !e.done || e.pop < 1.5);
 
     // toadlets hop away
-    toadlets.forEach(k => { k.t += dt; k.x += k.dir * 36 * SC * dt; k.y = k.base - Math.abs(Math.sin(k.t * 4)) * 14 * SC; if (k.t > 6) k.gone = true; });
-    toadlets = toadlets.filter(k => !k.gone);
+    tads.forEach(t => { if (t.leaving) t.fade = Math.max(0, t.fade - dt * 0.4); });
 
     specks.forEach(p => { p.y -= p.v * dt * 0.3; p.x += Math.sin(time * 0.5 + p.y * 0.02) * dt * 3; if (p.y < surfaceY) { p.y = floorY(p.x) - 2; } });
     fx.forEach(f => f.t += dt); fx = fx.filter(f => f.t < (f.life || 0.8));
@@ -313,25 +307,40 @@
     wander(t, 16 * SC, dt);
     if (t.grow >= 1) {
       t.type = t.morph; t.state = 'wander'; t.cool = 2;
-      const same = tads.filter(o => o.type === t.type && o !== t), cap = t.type === 'carn' ? (W < 600 ? 2 : 3) : (W < 600 ? 3 : 4);
+      const same = tads.filter(o => o.type === t.type && o !== t && !o.leaving), cap = t.type === 'carn' ? (W < 600 ? 2 : 3) : (W < 600 ? 3 : 4);
       if (same.length >= cap) { const old = same.sort((a, b) => a.born - b.born)[0]; metamorphose(old); }
     }
+  }
+
+  function amplex(q, dt) {
+    q.t += dt;
+    if (q.state === 'enter') {            // hop down the bank to the water
+      q.x += q.dir * 30 * SC * dt; q.y = floorY(q.x) - 6 - Math.abs(Math.sin(q.t * 4)) * 10 * SC;
+      if (floorY(q.x) > surfaceY + 30) { q.state = 'swim'; q.y = surfaceY + 8; }
+    } else if (q.state === 'swim') {      // dive to the bottom
+      const ty = floorY(q.tx) - 12 * SC; q.x = lerp(q.x, q.tx, 1 - Math.exp(-0.6 * dt)); q.y = lerp(q.y, ty, 1 - Math.exp(-0.8 * dt));
+      if (Math.abs(q.x - q.tx) < 6 && Math.abs(q.y - ty) < 6) { q.state = 'lay'; q.t = 0; }
+    } else if (q.state === 'lay') {       // a string of eggs, one at a time
+      if (q.t > q.laid * 0.45 && q.laid < 9) { q.laid++; eggs.push({ x: q.x - q.dir * (q.laid * 4 + rnd(-3, 3)) * SC, y: floorY(q.x) - rnd(5, 12) * SC, p: 0, done: false, spin: rnd(0, TAU), pop: 0 }); }
+      if (q.t > 5) { q.state = 'leave'; }
+    } else {                              // swim back up and away
+      q.x -= q.dir * 40 * SC * dt; q.y -= 28 * SC * dt;
+      if (q.y < surfaceY || !inWater(q.x)) { pair = null; pairT = rnd(30, 45); }
+    }
+  }
+  function drawPair(q) {
+    const sw = q.state === 'swim' || q.state === 'leave' ? Math.sin(time * 6) * 1.5 : 0;
+    drawToad(q.x, q.y, 11 * SC, q.state === 'leave' ? -q.dir : q.dir, false);
+    drawToad(q.x - q.dir * 3 * SC, q.y - 8 * SC + sw, 8.5 * SC, q.state === 'leave' ? -q.dir : q.dir, false);
   }
 
   function hatch(e) {
     e.done = true; e.pop = 0;
     stats.hatched++; if (nHatch) nHatch.textContent = stats.hatched;
-    const h = makeTad('hatch', e.x, e.y - 4);
-    h.vy = -20; h.morph = Math.random() < 0.35 + 0.5 * cue ? 'carn' : 'omni'; h.early = cue > 0.35;
-    tads.push(h);
-    fx.push({ kind: 'tag', x: clutchX + 30 * SC, y: floorY(clutchX) - 52 * SC, t: 0, life: 2.4, text: h.early ? 'shrimp ahead: hatched early' : 'hatched' });
+    if (Math.random() < 0.4) { const h = makeTad('hatch', e.x, e.y - 4); h.vy = -20; h.morph = Math.random() < 0.4 ? 'carn' : 'omni'; tads.push(h); }
   }
 
-  function metamorphose(t) {
-    t.fade = 0; // leaves the pond as a toadlet
-    const dir = t.x < W / 2 ? -1 : 1, edgeX = dir < 0 ? W * 0.08 : W * 0.92;
-    toadlets.push({ x: edgeX, base: floorY(edgeX) - 4, dir, t: 0 });
-  }
+  function metamorphose(t) { t.leaving = true; }
 
   /* ---------- drawing ---------- */
   function draw() {
@@ -352,7 +361,7 @@
     // specks
     ctx.fillStyle = P.speck; specks.forEach(p => { if (p.y > surfaceY + 2 && p.y < floorY(p.x)) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); } });
     // cue rings
-    rings.forEach(r => { ctx.strokeStyle = `rgba(226,128,70,${0.22 * r.a * (focus === 'egg' || labelsShown() ? 1.6 : 1)})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, TAU); ctx.stroke(); });
+    if (0) rings.forEach(r => { ctx.strokeStyle = `rgba(226,128,70,${0.22 * r.a * (focus === 'egg' || labelsShown() ? 1.6 : 1)})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, TAU); ctx.stroke(); });
 
     drawMud();
     tufts.forEach(drawTuft);
@@ -362,10 +371,9 @@
     tads.filter(t => t.type === 'carn').forEach(drawTad);
     tads.forEach(t => { if (t.state === 'strike') drawFlow(t); });
     fx.forEach(drawFx);
-    toadlets.forEach(k => drawToad(k.x, k.y, 7 * SC, k.dir, false));
+    if (pair) drawPair(pair);
     drawSurfaceLine();
-    drawLabels();
-    drawCursorHints();
+
     // HUD
     const slow = timeScale < 0.5;
     if (hudFps) hudFps.classList.toggle('on', slow);
@@ -398,16 +406,9 @@
     // shrimp cysts waiting in the mud
     ctx.fillStyle = dark ? 'rgba(230,200,160,0.5)' : 'rgba(120,80,40,0.55)';
     cysts.forEach(c => { if (inWater(c.x)) { ctx.beginPath(); ctx.arc(c.x, floorY(c.x) + c.d * SC, 1.6 * SC, 0, TAU); ctx.fill(); } });
-    // a spadefoot waiting underground for next year's rain
-    const bx = W * 0.86, by = floorY(W * 0.86) + 34 * SC;
-    ctx.fillStyle = dark ? 'rgba(0,0,0,0.25)' : 'rgba(80,55,30,0.25)';
-    ctx.beginPath(); ctx.ellipse(bx, by, 22 * SC, 13 * SC, 0, 0, TAU); ctx.fill();
-    drawToad(bx, by + 4 * SC, 12 * SC, -1, true);
-    ctx.fillStyle = P.muted; ctx.font = `${10 * Math.max(SC, 0.9)}px ${mono}`; ctx.textAlign = 'center';
-    if (W > 700) ctx.fillText('z', bx + 16 * SC, by - 14 * SC - Math.sin(time * 1.5) * 2);
     // desert bank props: ocotillo + the SHRIMP AHEAD sign
     drawOcotillo(W * 0.965, floorY(W * 0.965));
-    drawSign(W * 0.055, floorY(W * 0.055));
+
   }
 
   function drawTuft(f) {
@@ -533,17 +534,6 @@
       }
       ctx.restore();
     });
-    // cue meter
-    const x = clutchX, y = floorY(clutchX) - 34 * SC;
-    if (W > 520) {
-      ctx.font = `${Math.round(9.5 * Math.max(SC, 0.95))}px ${mono}`; ctx.textAlign = 'center'; ctx.fillStyle = P.ink;
-      ctx.globalAlpha = dim('egg') * 0.8;
-      if (!(labelsShown() || focus === 'egg') && !fx.some(f => f.kind === 'tag')) ctx.fillText(cue > 0.3 ? 'EMBRYOS · SHRIMP CUE' : 'EMBRYOS', x, y - 6);
-      for (let i = 0; i < 5; i++) {
-        ctx.fillStyle = i < Math.round(cue * 5) ? '#E2733E' : (dark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)');
-        ctx.fillRect(x - 22 + i * 9.5, y, 7, 4);
-      }
-    }
     ctx.restore();
   }
 
@@ -664,7 +654,7 @@
 
   /* ---------- input ---------- */
   function local(e) { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
-  cv.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const p = local(e); cursor.x = p.x; cursor.y = p.y; cursor.on = p.y > surfaceY - 10 && inWater(p.x); if (!cursor.on && cursor.sh) { cursor.sh.isCursor = false; cursor.sh = null; } });
+  if (0) cv.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const p = local(e); cursor.x = p.x; cursor.y = p.y; cursor.on = p.y > surfaceY - 10 && inWater(p.x); if (!cursor.on && cursor.sh) { cursor.sh.isCursor = false; cursor.sh = null; } });
   cv.addEventListener('pointerleave', () => { cursor.on = false; if (cursor.sh) { cursor.sh.isCursor = false; cursor.sh = null; } });
   cv.addEventListener('pointerdown', e => {
     const p = local(e); if (!inWater(p.x) || p.y < surfaceY) return;
@@ -688,9 +678,9 @@
 
   /* ---------- boot ---------- */
   palette(); resize(); populate();
-  for (let i = 0; i < 120; i++) update(1 / 30);   // warm up so the first frame is already lively
-  introT = 7; draw();
-  if (reduce) { const b = $('[data-act="pause"]'); if (b) { b.textContent = 'Play'; b.setAttribute('aria-pressed', 'true'); } introT = 9999; labelsOn = true; draw(); }
+  for (let i = 0; i < 120; i++) update(1 / 30);
+  introT = 0; draw();
+  if (reduce) { const b = $('[data-act="pause"]'); if (b) { b.textContent = 'Play'; b.setAttribute('aria-pressed', 'true'); } draw(); }
   new ResizeObserver(() => { resize(); if (!running) draw(); }).observe(wrap);
   new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.05 }).observe(wrap);
   document.addEventListener('visibilitychange', sync);

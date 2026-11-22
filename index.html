@@ -283,28 +283,6 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </header>
 
-<section class="pond-sec" aria-label="Interactive pond">
-  <div id="pond" class="pond">
-    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: orange carnivore tadpoles stalk and suction-feed on fairy shrimp, olive omnivore tadpoles scrape algae off the bottom, and a clutch of embryos develops faster when shrimp cues reach it."></canvas>
-    <div class="pond-hud wrap"><span class="mono">Tank 01 · Monsoon pond · Portal, AZ</span><span class="pond-fps" aria-hidden="true"><i></i>High-speed · 1000 fps <b class="pond-ms"></b></span></div>
-    <p class="pond-toast" role="status" aria-live="polite"></p>
-  </div>
-  <div class="pond-bar wrap">
-    <div class="chips" aria-label="Highlight">
-      <button class="chip" type="button" data-focus="carn"><i style="background:#D9703F"></i>Carnivores · suction</button>
-      <button class="chip" type="button" data-focus="omni"><i style="background:#8D8A4E"></i>Omnivores · scraping</button>
-      <button class="chip" type="button" data-focus="egg"><i style="background:#E2733E;border-radius:2px"></i>Embryos · anticipation</button>
-    </div>
-    <p class="pond-meta"><span class="hint-mouse">Move into the water: you're the shrimp. Click to add more.</span><span class="hint-touch">Tap the water to add shrimp.</span>
-      <span>eaten <b data-count="eaten">0</b></span><span>algae scraped <b data-count="algae">0</b></span><span>hatched <b data-count="hatched">0</b></span></p>
-    <div class="ctrls">
-      <button class="ctl" type="button" data-act="labels" aria-pressed="false">Labels</button>
-      <button class="ctl" type="button" data-act="slow" aria-pressed="false">Slow-mo</button>
-      <button class="ctl" type="button" data-act="pause" aria-pressed="false">Pause</button>
-    </div>
-  </div>
-</section>
-
 <aside class="now" aria-label="What I'm working on now">
   <div class="now-label"><i></i>Now</div>
   <div class="belt"><ul class="belt-track">
@@ -324,6 +302,23 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <li aria-hidden="true"><b>Fellowship</b>NSF GRFP, 2026–2029</li>
   </ul></div>
 </aside>
+
+<section class="pond-sec" aria-label="Interactive pond">
+  <div id="pond" class="pond">
+    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: orange carnivore tadpoles suction-feed on fairy shrimp, olive omnivore tadpoles scrape algae off the bottom, and now and then a pair of spadefoot toads in amplexus swims in to lay eggs."></canvas>
+    <div class="pond-hud wrap"><span class="mono">Tank 01 · Monsoon pond · Portal, AZ</span><span class="pond-fps" aria-hidden="true"><i></i>High-speed · 1000 fps <b class="pond-ms"></b></span></div>
+    <p class="pond-toast" role="status" aria-live="polite"></p>
+  </div>
+  <div class="pond-bar wrap">
+    <p class="pond-meta"><span class="hint-mouse">Carnivores suck in fairy shrimp, omnivores scrape algae, and now and then a pair of spadefoots swims in to lay eggs. Click the water to drop a shrimp.</span><span class="hint-touch">Tap the water to drop a shrimp.</span></p>
+    <div class="ctrls">
+            <button class="ctl" type="button" data-act="slow" aria-pressed="false">Slow-mo</button>
+      <button class="ctl" type="button" data-act="pause" aria-pressed="false">Pause</button>
+    </div>
+  </div>
+</section>
+
+
 
 <main>
 <section id="research">
@@ -646,16 +641,17 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   let w,h,rings=[];
   function size(){ const dpr=window.devicePixelRatio||1; w=c.clientWidth; h=c.clientHeight; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
   function accent(){ return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2B3F9C'; }
-  const seeds=[[.12,.82],[.42,.18],[.55,.9]];
-  function init(){ rings=[]; seeds.forEach((s,i)=>{ for(let k=0;k<4;k++) rings.push({x:s[0],y:s[1],r:k*70+i*25,max:420}); }); }
+  function init(){ rings=[]; }
+  function drop(){ rings.push({x:Math.random()*w,y:Math.random()*h,r:0,max:60+Math.random()*90}); }
   function draw(){
-    ctx.clearRect(0,0,w,h); ctx.strokeStyle=accent(); ctx.lineWidth=1.2;
-    rings.forEach(r=>{ ctx.globalAlpha=Math.max(0,1-r.r/r.max)*.3; ctx.beginPath(); ctx.ellipse(r.x*w,r.y*h,r.r,r.r*.42,0,0,Math.PI*2); ctx.stroke(); });
+    ctx.clearRect(0,0,w,h); ctx.strokeStyle=accent(); ctx.lineWidth=1;
+    rings.forEach(r=>{ for(let k=0;k<3;k++){ const rr=r.r-k*14; if(rr<=0) continue; ctx.globalAlpha=Math.max(0,1-r.r/r.max)*.32*(1-k*.28); ctx.beginPath(); ctx.ellipse(r.x,r.y,rr,rr*.38,0,0,Math.PI*2); ctx.stroke(); } });
     ctx.globalAlpha=1;
   }
-  function tick(){ rings.forEach(r=>{ r.r+=0.35; if(r.r>r.max) r.r=0; }); draw(); requestAnimationFrame(tick); }
+  let acc=0;
+  function tick(){ acc+=1; if(acc>28){acc=0; drop();} rings.forEach(r=>{ r.r+=0.45; }); rings=rings.filter(r=>r.r<r.max+30); draw(); requestAnimationFrame(tick); }
   size(); init(); window.addEventListener('resize',()=>{size();draw();});
-  if(reduce) draw(); else tick();
+  if(reduce){ for(let i=0;i<6;i++){ drop(); rings[i].r=rings[i].max*.4; } draw(); } else { for(let i=0;i<4;i++){ drop(); rings[i].r=Math.random()*rings[i].max; } tick(); }
 })();
 
 // Autoplay loops only while on screen (saves battery/data on phones)
