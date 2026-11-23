@@ -90,7 +90,9 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 /* pond (tank 01) */
 .pond-sec{border-bottom:1px solid var(--line);padding:0;background:linear-gradient(var(--bg),var(--bg))}
 .pond{position:relative}
-.pond canvas{display:block;width:100%;height:clamp(360px,38vw,500px);touch-action:pan-y;cursor:crosshair}
+.pond canvas{display:block;width:100%;height:auto;aspect-ratio:1200/440}
+.pond-progress{grid-column:1/-1;height:3px;background:var(--line);position:relative;overflow:hidden;flex-basis:100%}
+.pond-progress i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent)}
 .pond-hud{position:absolute;top:12px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}
 .pond-fps{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;background:#C2462B;color:#fff;padding:4px 9px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;display:inline-flex;gap:8px;align-items:center}
 .pond-fps.on{opacity:1;transform:none}
@@ -312,12 +314,13 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <p class="pond-toast" role="status" aria-live="polite"></p>
   </div>
   <div class="pond-bar wrap">
+    <div class="pond-progress" aria-hidden="true"><i></i></div>
     <p class="pond-story"><span class="pond-step mono"></span><span class="pond-cap" aria-live="polite"></span></p>
     <div class="ctrls">
       <button class="ctl" type="button" data-scen="dry" aria-pressed="true">Fast-drying pond</button>
       <button class="ctl" type="button" data-scen="wet" aria-pressed="false">Long-lasting pond</button>
-      <button class="ctl" type="button" data-act="pause" aria-pressed="false">Pause</button>
-      <button class="ctl" type="button" data-act="ff" aria-pressed="false">Fast-forward</button>
+      <button class="ctl" type="button" data-act="pause" aria-pressed="false">❚❚ Pause</button>
+      <button class="ctl" type="button" data-act="ff" aria-pressed="false">⏩ Fast-forward</button>
     </div>
   </div>
 </section>
