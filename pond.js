@@ -51,7 +51,7 @@
   };
   const ENDT = { dry: 74, wet: 76 };
 
-  let k = 1, W = 0, dark = false, P = {}, running = false, visible = false, paused = false, userStarted = false, speed = 1;
+  let k = 1, W = 0, DPR = 1, mob = false, AR = VH / VW, cam = { vw: VW }, bgK = 1, dark = false, P = {}, running = false, visible = false, paused = false, userStarted = false, speed = 1;
   let scen = 'dry', autoAlt = true, T = 0, clock = 0, tads = [], shrimp = [], eggs = [], drops = [], bits = [], gulps = [];
 
   function palette() {
@@ -62,15 +62,16 @@
   }
   let bg = null;
   function buildBg() {
-    bg = document.createElement('canvas'); bg.width = cv.width; bg.height = cv.height; const g = bg.getContext('2d'); g.setTransform(cv.width / VW, 0, 0, cv.height / VH, 0, 0);
+    bg = document.createElement('canvas'); bg.width = Math.round(VW * bgK); bg.height = Math.round(VH * bgK); const g = bg.getContext('2d'); g.setTransform(bgK, 0, 0, bgK, 0, 0);
     [[0, P.m1], [16, P.m2], [42, P.m3]].forEach(([o, c]) => { g.beginPath(); g.moveTo(0, VH); for (let x = 0; x <= VW; x += 6) g.lineTo(x, floor(x) + o + (o ? Math.sin(x * 0.02 + o) * 3 : 0)); g.lineTo(VW, VH); g.fillStyle = c; g.fill(); });
   }
   function resize() {
     W = wrap.getBoundingClientRect().width; k = W / VW;
-    const DPR = Math.min(2, window.devicePixelRatio || 1);
-    cv.style.height = (W * VH / VW) + 'px';
-    cv.width = Math.round(W * DPR); cv.height = Math.round(W * VH / VW * DPR);
-    ctx.setTransform(DPR * k, 0, 0, DPR * k, 0, 0); buildBg();
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    mob = W < 700; AR = mob ? 0.62 : VH / VW;            // phones get a closer, taller camera
+    cv.style.aspectRatio = 'auto'; cv.style.height = (W * AR) + 'px';
+    cv.width = Math.round(W * DPR); cv.height = Math.round(W * AR * DPR);
+    bgK = DPR * (mob ? W / 600 : k); if (!mob) cam.vw = VW; buildBg();
   }
   const PROPS = [{ t: 'rock', x: 455, r: 20 }, { t: 'rock', x: 745, r: 16 }, { t: 'stick', x: 560, len: 80, a: -0.25 }, { t: 'stick', x: 655, len: 56, a: 0.3 }];
   const TUFTS = Array.from({ length: 40 }, (_, i) => ({ x: 360 + i * 12, s: R(i) * TAU }));
@@ -88,8 +89,15 @@
   }
 
   /* ---------- story clock ---------- */
+  function camTarget() {
+    if (!mob) return VW;
+    let w = 2 * (600 - edge(-1)) + 220;                   // keep both shorelines (and the metamorph queues) in view
+    if (cloudX() !== null || raining()) w = Math.max(w, 880);
+    return clamp(w, 600, 900);
+  }
   function step(dt) {
     T += dt; clock += dt;
+    cam.vw = mob ? damp(cam.vw, camTarget(), 1.1, dt) : VW;
     const dry = scen === 'dry';
     // water level
     if (T < 4) wl = DRY;
@@ -226,7 +234,9 @@
 
   /* ---------- drawing ---------- */
   function draw() {
-    ctx.clearRect(0, 0, VW, VH);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
+    const vw = cam.vw, kk2 = W / vw, x0 = 600 - vw / 2, y0 = mob ? 434 - vw * AR : 0;
+    ctx.setTransform(DPR * kk2, 0, 0, DPR * kk2, -x0 * DPR * kk2, -y0 * DPR * kk2);
     // water
     if (wl < DRY - 2) {
       const g = ctx.createLinearGradient(0, wl, 0, 400); g.addColorStop(0, P.wTop); g.addColorStop(1, P.wBot);
@@ -234,7 +244,7 @@
       ctx.fillStyle = P.speck; SPECKS.forEach(p => { if (p.y > wl + 3 && p.y < floor(p.x)) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); } });
     }
     // ground
-    if (bg) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(bg, 0, 0); ctx.restore(); }
+    if (bg) ctx.drawImage(bg, 0, 0, VW, VH);
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, VW, wl + 1); ctx.clip(); ctx.fillStyle = P.land; ctx.beginPath(); ctx.moveTo(0, VH); for (let x = 0; x <= VW; x += 10) ctx.lineTo(x, floor(x)); ctx.lineTo(VW, VH); ctx.fill(); ctx.restore();
     const crack = 1 - win(DRY - wl, 0, 60);
     if (crack > 0) { ctx.strokeStyle = P.crack; ctx.lineWidth = 1; ctx.globalAlpha = crack; for (let x = 380; x < 820; x += 28) { const y = floor(x); ctx.beginPath(); ctx.moveTo(x, y + 1); ctx.lineTo(x + 7, y + 9); ctx.lineTo(x + 2, y + 16); ctx.stroke(); } ctx.globalAlpha = 1; }
@@ -267,7 +277,7 @@
     ctx.strokeStyle = P.rain; ctx.lineWidth = 1; drops.forEach(d => { ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - 2, d.y + 10); ctx.stroke(); });
     const cx = cloudX(); if (cx !== null) { ctx.fillStyle = P.cloud; [[0, 0, 62], [-58, 12, 44], [58, 10, 48], [-105, 24, 32], [105, 24, 34], [0, 26, 52]].forEach(([dx, dy, r]) => { ctx.beginPath(); ctx.arc(cx + dx, 34 + dy, r, 0, TAU); ctx.fill(); }); }
     // fast-forward badge
-    if (speed > 1) { ctx.fillStyle = dark ? 'rgba(230,234,227,0.9)' : 'rgba(24,32,29,0.85)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(1100, 14, 82, 30, 6) : ctx.rect(1100, 14, 82, 30); ctx.fill();
+    if (speed > 1) { const bs = mob ? 0.62 : k; ctx.setTransform(DPR * bs, 0, 0, DPR * bs, DPR * (W - 100 * bs) - 1100 * DPR * bs, 0); ctx.fillStyle = dark ? 'rgba(230,234,227,0.9)' : 'rgba(24,32,29,0.85)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(1100, 14, 82, 30, 6) : ctx.rect(1100, 14, 82, 30); ctx.fill();
       ctx.fillStyle = dark ? '#111613' : '#F6F7F2'; [0, 14].forEach(o => { ctx.beginPath(); ctx.moveTo(1112 + o, 21); ctx.lineTo(1126 + o, 29); ctx.lineTo(1112 + o, 37); ctx.fill(); }); ctx.font = '600 15px ui-monospace, monospace'; ctx.fillText(speed + '×', 1146, 35); }
   }
 
@@ -363,7 +373,7 @@
   if (pb) pb.addEventListener('click', () => { userStarted = true; setPause(!paused); sync(); });
   if (ff) ff.addEventListener('click', () => { speed = speed === 1 ? 4 : 1; ff.setAttribute('aria-pressed', String(speed > 1)); ff.textContent = speed > 1 ? '⏩ 4× on' : '⏩ Fast-forward'; if (!running) draw(); });
 
-  palette(); resize(); reset(); draw(); syncButtons(); setPause(false);
+  palette(); resize(); reset(); cam.vw = camTarget(); draw(); syncButtons(); setPause(false);
   if (ff) ff.textContent = '⏩ Fast-forward';
   if (reduce) setPause(true);
   new ResizeObserver(() => { resize(); draw(); }).observe(wrap);
