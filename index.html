@@ -289,8 +289,8 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 .route .mono{display:block;color:var(--accent)}
 .route b{display:block;font-family:var(--display);font-size:1.2rem;margin:2px 0 4px}
 .route p{margin:0;font-size:1.02rem;color:var(--muted)}
-.route figure{flex:0 0 200px;margin:0;border:1px solid var(--line);background:var(--paper);padding:6px}
-.route figure img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.route figure{flex:0 0 210px;margin:0;border:1px solid var(--line);background:var(--paper);padding:6px}
+.route figure img{width:100%;height:auto}
 .route figcaption{font-family:var(--mono);font-size:.68rem;color:var(--muted);padding-top:5px}
 @media (max-width:640px){ .route li{flex-direction:column;gap:12px} .route figure{flex:none;width:100%;max-width:300px} }
 .interests figcaption{font-family:var(--mono);font-size:.7rem;color:var(--muted);padding-top:6px}
@@ -300,7 +300,7 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 footer{padding:56px 0 72px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-end}
 footer h2{font-size:clamp(2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.03em}
-footer .links{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.85rem}
+footer .links{display:grid;grid-template-columns:repeat(2,auto);gap:8px 40px;font-family:var(--mono);font-size:.85rem}
 footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em;margin:8px 0 0}
 </style>
 </head>
@@ -311,13 +311,13 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <a class="brand" href="#top">J. L. B. Kotzen</a>
     <ul>
       <li><a href="#research">Research</a></li>
-      <li><a href="#publications">Publications</a></li>
       <li><a href="#talks">Talks &amp; posters</a></li>
       <li><a href="#service">Mentoring &amp; service</a></li>
       <li><a href="#cv">CV</a></li>
       <li><a href="#press">Press</a></li>
       <li><a href="#photos">Photos</a></li>
       <li><a href="#videos">Videos</a></li>
+      <li><a href="#publications">Publications</a></li>
       <li><a href="#interests">Interests</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -410,8 +410,8 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <div class="txt">
           <span class="tag">Anticipatory plasticity</span>
           <h3>How development forecasts the future</h3>
-          <p>Spadefoot embryos share their pond with fairy shrimp for about two days before they can eat them. In my experiments, embryos that only sensed baby shrimp hatched larger, while embryos bumped by adult shrimp hatched earlier and smaller. Next: what they sense, and how anticipation evolves from ordinary responsive plasticity.</p>
-          <p class="stat">Lab colony + wild SWRS families · review in prep with D. Pfennig</p>
+          <p>Embryos share their pond with fairy shrimp before they can eat them. Those that sensed baby shrimp hatched larger; those bumped by adult shrimp hatched earlier and smaller. Next: what they sense, and how anticipation evolves.</p>
+          <p class="stat">With D. Pfennig</p>
         </div>
       </article>
       <article class="project">
@@ -419,8 +419,8 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <div class="txt">
           <span class="tag">Biomechanics</span>
           <h3>The performance basis of disruptive selection</h3>
-          <p>Why are intermediate tadpoles less fit? I built a 1,000 fps filming rig with a 45° mirror for lateral and ventral views at once, then filmed tadpoles striking fairy shrimp and scraping algae, to test whether intermediates do worse than each specialist at its own job.</p>
-          <p class="stat">149 tadpoles · carnivores, omnivores, intermediates &amp; <i>S. couchii</i> · DLTdv8 · with T. Hedrick · <a href="#videos">watch</a></p>
+          <p>Why are intermediate tadpoles less fit? I film tadpoles at 1,000 frames per second striking shrimp and scraping algae to test whether intermediates lose at both jobs.</p>
+          <p class="stat">With T. Hedrick · <a href="#videos">watch the footage</a></p>
         </div>
       </article>
       <article class="project">
@@ -437,47 +437,18 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <div class="txt">
           <span class="tag">Predator &amp; prey</span>
           <h3>Spadefoots and fairy shrimp</h3>
-          <p>Fairy shrimp eggs wait out the dry season in pond mud. With Sheila Patek, I'm hatching shrimp from Arizona pond sediment to ask how they evolve in ponds where carnivores are common and the water vanishes fast.</p>
-          <p class="stat">Sediment cores · common-garden hatching · with S. Patek (Duke)</p>
+          <p>Fairy shrimp eggs wait out the dry season in pond mud. I hatch them from Arizona sediment to ask how shrimp evolve where carnivores are common and the water vanishes fast.</p>
+          <p class="stat">With S. Patek (Duke)</p>
         </div>
       </article>
     </div>
 
-    <div class="before">
-      <p class="mono">Before UNC<br>Boston College<br>2022–2024</p>
-      <div class="before-grid">
-        <div class="body-col">
-          <h3>The performance basis of ecomorphological diversification in centrarchid fishes</h3>
-          <p>With Prof. Christopher Kenaley, I asked how jaw morphology in sunfishes and their relatives translates into feeding performance. I dissected the A1, A3 and Aω jaw-muscle divisions in specimens from the Harvard Museum of Comparative Zoology, modeled jaw closing with the R package JawCloseR, and used suction-index residuals to predict feeding mode. The results did not always match what morphology alone predicts.</p>
-          <p><a href="media/centrarchid-poster.pdf">View the poster (PDF)</a></p>
-        </div>
-        <a class="thumb" href="media/centrarchid-poster.pdf"><img src="media/centrarchid-poster-thumb.jpg" alt="Poster: The Performance Basis of Ecomorphological Diversification in Centrarchid Fishes, by Jonah L. B. Kotzen and Christopher P. Kenaley" loading="lazy"></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="publications">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">02 / Publications</p><h2>Papers</h2></div>
-    <div class="entries indent">
-      <div class="entry">
-        <div class="when">In prep</div>
-        <div class="what"><strong>Kinematics and linkage mechanics of the lower jaw in ray-finned fishes: a compliant symphyseal joint facilitates buccal expansion</strong> <span class="pill">Article</span>
-          <span class="meta">Kenaley CP, <span class="me">Kotzen JLB</span>, et al.</span></div>
-      </div>
-      <div class="entry">
-        <div class="when">In prep</div>
-        <div class="what"><strong>How development forecasts the future: the evolution of anticipatory plasticity</strong> <span class="pill">Review</span>
-          <span class="meta"><span class="me">Kotzen JLB</span>, et al.</span></div>
-      </div>
-    </div>
   </div>
 </section>
 
 <section id="talks">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">03 / Talks &amp; posters</p><h2>Presentations</h2></div>
+    <div class="sec-head"><p class="mono">02 / Talks &amp; posters</p><h2>Presentations</h2></div>
     <div class="indent">
       <div class="feature">
         <a class="thumb" href="media/poster.jpg"><img src="media/poster-session.jpg" alt="Jonah standing beside his poster, The Performance Basis of Disruptive Selection in Spadefoot Toad Tadpoles, at the regional SICB meeting" loading="lazy"></a>
@@ -532,7 +503,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section id="service">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">04 / Mentoring &amp; service</p><h2>Bringing people in</h2></div>
+    <div class="sec-head"><p class="mono">03 / Mentoring &amp; service</p><h2>Bringing people in</h2></div>
     <div class="body-col indent">
       <p>The parts of science I enjoy most outside the data are the ones that connect people: bringing new students into research, and building the spaces where a department actually talks to itself.</p>
     </div>
@@ -564,7 +535,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section id="cv">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">05 / CV</p><h2>Curriculum vitae</h2></div>
+    <div class="sec-head"><p class="mono">04 / CV</p><h2>Curriculum vitae</h2></div>
     <div class="indent">
       <div class="cv-row">
         <a class="btn" href="media/docs/Kotzen_CV.pdf">Download CV (PDF)</a>
@@ -603,7 +574,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section id="press">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">06 / Press</p><h2>In the news</h2></div>
+    <div class="sec-head"><p class="mono">05 / Press</p><h2>In the news</h2></div>
     <div class="entries indent">
       <div class="entry"><div class="when">May 2026</div><div class="what"><strong><a href="https://www.unc.edu/posts/2026/05/18/23-student-researchers-receive-2026-nsf-fellowships/">23 student researchers receive 2026 NSF fellowships</a></strong><span class="meta">UNC-Chapel Hill</span></div></div>
       <div class="entry"><div class="when">2025</div><div class="what"><strong><a href="https://bio.unc.edu/news/graduate-student-appreciation-week-2025-nsf-grfp-awardees-honorable-mentions/">Graduate Student Appreciation Week 2025: NSF GRFP awardees &amp; honorable mentions</a></strong><span class="meta">UNC Department of Biology · honorable mention</span></div></div>
@@ -618,7 +589,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section id="photos">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">07 / Photos</p><h2>From the field</h2></div>
+    <div class="sec-head"><p class="mono">06 / Photos</p><h2>From the field</h2></div>
 
     <div class="sub"><h3>Out there</h3><p class="mono">Fieldwork &amp; herping</p></div>
     <div class="masonry">
@@ -628,6 +599,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       <figure><a href="media/birding-nosa.jpg"><img src="media/birding-nosa.jpg" alt="Selfie of Jonah with a camera and his friend Nosa holding binoculars on a sunny wooded trail" loading="lazy"></a><figcaption>Birding with Nosa (Hurlbert Lab)</figcaption></figure>
       <figure><a href="media/highspeed-rig.jpg"><img src="media/highspeed-rig.jpg" alt="Jonah peering over a Chronos high-speed camera surrounded by LED light panels and a filming tank" loading="lazy"></a><figcaption>The high-speed filming rig</figcaption></figure>
       <figure><img src="media/field-selfie.jpg" alt="Jonah in a cap and sunglasses holding a small animal in the field" loading="lazy"><figcaption>Field season, Portal, AZ</figcaption></figure>
+      <figure><a href="media/flashlight-road.jpg"><img src="media/flashlight-road.jpg" alt="Jonah crouching on a desert road at night with a flashlight, thumbs up, a rattlesnake lit in the beam" loading="lazy"></a><figcaption>Rattlesnake in the beam</figcaption></figure>
       <figure><a href="media/sfwc-pelican.jpg"><img src="media/sfwc-pelican.jpg" alt="Jonah laughing as he holds a brown pelican patient, gloved hand on its bill" loading="lazy"></a><figcaption>Pelican patient, SFWC</figcaption></figure>
       <figure><a href="media/sfwc-egret.jpg"><img src="media/sfwc-egret.jpg" alt="Jonah at an exam table holding a great egret wrapped in a towel" loading="lazy"></a><figcaption>Great egret exam, SFWC</figcaption></figure>
       <figure><a href="media/sfwc-kingsnake.jpg"><img src="media/sfwc-kingsnake.jpg" alt="Selfie from below of Jonah with a kingsnake wrapped around his wrist and hand, tongue out" loading="lazy"></a><figcaption>Kingsnake selfie, SFWC</figcaption></figure>
@@ -659,7 +631,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
 
 <section id="videos">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">08 / Videos</p><h2>Feeding, frame by frame</h2></div>
+    <div class="sec-head"><p class="mono">07 / Videos</p><h2>Feeding, frame by frame</h2></div>
     <div class="videos">
       <article class="vid wide">
         <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles scraping algae and striking at fairy shrimp"></video></div>
@@ -681,6 +653,24 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </section>
 
+<section id="publications">
+  <div class="wrap">
+    <div class="sec-head"><p class="mono">08 / Publications</p><h2>Papers</h2></div>
+    <div class="entries indent">
+      <div class="entry">
+        <div class="when">In prep</div>
+        <div class="what"><strong>Kinematics and linkage mechanics of the lower jaw in ray-finned fishes: a compliant symphyseal joint facilitates buccal expansion</strong> <span class="pill">Article</span>
+          <span class="meta">Kenaley CP, <span class="me">Kotzen JLB</span>, et al.</span></div>
+      </div>
+      <div class="entry">
+        <div class="when">In prep</div>
+        <div class="what"><strong>How development forecasts the future: the evolution of anticipatory plasticity</strong> <span class="pill">Review</span>
+          <span class="meta"><span class="me">Kotzen JLB</span>, et al.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="interests">
   <div class="wrap">
     <div class="sec-head"><p class="mono">09 / Off the clock</p><h2>Interests</h2></div>
@@ -695,11 +685,11 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <div class="route indent">
       <h3>How I got here</h3>
       <ol>
-        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>A kid with a snake tank and a "Snake Crossing" sign on the wall.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding a small snake in front of his terrarium, a Snake Crossing sign on the wall" loading="lazy"></figure></li>
-        <li><div><span class="mono">Boca Raton, FL</span><b>Saint Andrew's School</b><p>High school, and my first taste of student government.</p></div></li>
-        <li><div><span class="mono">Chestnut Hill, MA</span><b>Boston College</b><p>B.S. and my first research: fish jaw mechanics with Chris Kenaley.</p></div></li>
-        <li><div><span class="mono">Fort Lauderdale, FL</span><b>South Florida Wildlife Center</b><p>Back home to work in wildlife rehabilitation: pelicans, egrets, snakes and the occasional celebrity.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin</figcaption></figure></li>
-        <li><div><span class="mono">Chapel Hill, NC</span><b>UNC · D. Pfennig Lab</b><p>PhD on spadefoot toads, with summers road cruising near Portal, AZ.</p></div><figure><img src="media/flashlight-road.jpg" alt="Jonah crouching on a desert road at night with a flashlight, thumbs up, a rattlesnake lit in the beam" loading="lazy"><figcaption>The real night drive</figcaption></figure></li>
+        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>I flooded the backyard to bring up earthworms, napped with a stuffed spider named Spidey, and cried every time Godzilla died. My first pet was an albino corn snake, which led me to local corn snake expert Kathy Love and my first real lessons in morphology, behavior and genetics.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding his corn snake in front of its terrarium, a Snake Crossing sign on the wall" loading="lazy"><figcaption>Me and my first snake</figcaption></figure></li>
+        <li><div><span class="mono">Boca Raton, FL</span><b>Saint Andrew's School</b><p>High school, student body president, and a plan to become a doctor: Yale Young Global Scholars in biomedical sciences and summers shadowing dermatologists and immunologists. Something more academic always felt missing.</p></div><figure><img src="media/hs-speech.jpg" alt="Jonah in a navy blazer and red tie speaking at a wooden lectern" loading="lazy"><figcaption>At the lectern, Saint Andrew's</figcaption></figure></li>
+        <li><div><span class="mono">Chestnut Hill, MA</span><b>Boston College</b><p>My first Ecology &amp; Evolution course flipped a switch. I majored in biology and the classics, TA'd that course, and studied how jaw form predicts feeding performance in sunfishes in Chris Kenaley's lab. Outside the lab I was BC's first Jewish student body president and founded the BC Classics Club. I graduated summa cum laude and Phi Beta Kappa.</p></div><figure><img src="media/bc-portrait.jpg" alt="Jonah in a navy blazer smiling with arms crossed on a balcony in a bright atrium" loading="lazy"><figcaption>Senior year at BC</figcaption></figure></li>
+        <li><div><span class="mono">Fort Lauderdale, FL</span><b>South Florida Wildlife Center</b><p>A gap year back home in wildlife rehabilitation: turtles, skunks, opossums, songbirds, raptors and plenty of pelicans. It taught me that biology is also patience, observation and care. I also wrote my first GRFP proposal, on how snakes "walk" their jaws over prey, which earned an honorable mention.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin at SFWC</figcaption></figure></li>
+        <li><div><span class="mono">Chapel Hill, NC</span><b>UNC · D. Pfennig Lab</b><p>Back to my herpetology roots. I'm an NSF GRFP Fellow studying how spadefoot toads anticipate the ponds they'll grow up in, from jaws filmed at 1,000 fps to embryos that sense shrimp before hatching. Summers mean midnight road cruising and drying ponds near Portal, AZ.</p></div><figure><img src="media/night-snake.jpg" alt="Jonah at night in a headlamp and backwards cap, holding a patterned snake and grinning" loading="lazy"><figcaption>Road cruising, Portal, AZ</figcaption></figure></li>
       </ol>
     </div>
   </div>
