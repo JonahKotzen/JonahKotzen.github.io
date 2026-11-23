@@ -29,7 +29,7 @@ animals.forEach(a=>{const c=document.createElement('i');c.title=a.name;c.setAttr
 
 function resize(){
   const r=hero.getBoundingClientRect();if(!r.width||!r.height)return;W=r.width;H=r.height;DPR=Math.min(2,devicePixelRatio||1);
-  mobile=W<760;hy=H*(mobile?.6:.5);vx=W*(mobile?.5:.66);hwk=mobile?.55:.42;
+  mobile=W<760;hy=H*.5;if(mobile){const c=hero.querySelector('.hl-copy');const cb=c?c.getBoundingClientRect().bottom-r.top:H*.45;hy=Math.min(H*.62,Math.max(H*.4,cb+40))}vx=W*(mobile?.5:.66);hwk=mobile?.55:.42;
   for(const c of [cv,bg,sky,scn,bm]){c.width=W*DPR;c.height=H*DPR}
   for(const x of [ctx,bx,sx,nx,mx])x.setTransform(DPR,0,0,DPR,0,0);
   buildBg();buildSky();
@@ -152,7 +152,7 @@ hero.querySelectorAll('.hl-mode button').forEach(b=>b.addEventListener('click',(
 
 function found(a,t,quiet){if(a.found)return;a.found=true;a.at=quiet?-99:t;a.chip.classList.add('on');a.chip.setAttribute('aria-label',a.name+' (found)');const n=animals.filter(x=>x.found).length;count.textContent=`${n} / ${animals.length}`;if(n===animals.length&&!doneToast&&!quiet){doneToast=true;toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),3800)}}
 
-function pos(a,t){const lat=a.move?a.move(t):a.lat;return P(lat,a.d)}
+function pos(a,t){let lat=a.move?a.move(t):a.lat;if(!mobile)return P(lat,a.d);lat*=.78;const q=P(lat,a.d);const bot=H-76;q.y=hy+a.d*(bot-hy);q.x=Math.max(46,Math.min(W-46,q.x));q.s*=1.3;return q}
 
 function draw(t,dt){
   if(!W||!H)return;
@@ -201,8 +201,8 @@ function draw(t,dt){
   // 5. field-note labels
   let best=null,bd=1e9;for(const a of animals){if(!a.found)continue;const d=Math.hypot(a.p.x-beam.x,a.p.y-beam.y);if(d<bd){bd=d;best=a}}
   const used=[];
-  for(const a of animals){if(!a.found||a===best&&bd<BR*1.2)continue;const fresh=t-a.at<3.5;if(lightsOn||fresh)tag(a,a.p,lightsOn?1:Math.min(1,3.5-(t-a.at)),used)}
-  if(best&&bd<BR*1.2){label(best,best.p,Math.max(0,Math.min(1,(BR*1.2-bd)/(BR*.4))),t)}
+  for(const a of animals){if(!a.found||(a===best&&bd<BR*1.2&&!lightsOn))continue;const fresh=t-a.at<3.5;if(lightsOn||fresh)tag(a,a.p,lightsOn?1:Math.min(1,3.5-(t-a.at)),used)}
+  if(best&&bd<BR*1.2&&!lightsOn){label(best,best.p,Math.max(0,Math.min(1,(BR*1.2-bd)/(BR*.4))),t)}
 
   // cursor ring
   if(!touchy&&!idle&&!lightsOn)flashlight(beam.x,beam.y);
