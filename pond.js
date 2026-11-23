@@ -39,12 +39,13 @@
              [29, 'The eggs hatch. Same clutch, same pond.'],
              [33, 'Tadpoles that eat shrimp turn carnivore; tadpoles that graze algae turn omnivore.']],
     dry: [[46, 'No more rain. The pond dries fast.'],
-          [52, 'Carnivores develop faster: legs, then out onto the shore as the tail is reabsorbed.'],
-          [63, 'The pond is gone. The slower omnivores die; the carnivores made it out.'],
+          [48.5, 'Carnivores develop faster: legs, then out onto the shore as the tail is reabsorbed.'],
+          [52, 'The slower omnivores are still tadpoles, and they get stranded as the water disappears.'],
+          [63, 'The pond is gone. Only the carnivores made it out.'],
           [69, 'Fast-drying ponds favor carnivores.']],
     wet: [[40, 'This pond had few shrimp, and they are gone as the water shrinks.'],
           [46, 'A second storm floods the pond even higher.'],
-          [52, 'With no shrimp left, the carnivores starve. The omnivores keep grazing.'],
+          [50, 'With no shrimp left, the carnivores starve. The omnivores keep grazing.'],
           [61, 'In a long-lasting pond, the omnivores develop and walk out.'],
           [71, 'Long-lasting ponds favor omnivores.']]
   };
@@ -59,12 +60,17 @@
     P = dark ? { wTop: 'rgba(52,86,96,0.85)', wBot: 'rgba(24,44,44,0.95)', surf: 'rgba(160,200,210,0.6)', m1: '#3B2F22', m2: '#2E251B', m3: '#251E16', land: '#4A3B2A', algae: '#5E8F3E', cloud: '#3A4248', rain: 'rgba(170,200,220,0.45)', rock: '#5B5A55', stick: '#5A4632', crack: 'rgba(0,0,0,0.35)', speck: 'rgba(210,220,200,0.15)', egg: 'rgba(200,220,230,0.3)', eggLine: 'rgba(200,220,230,0.55)' }
       : { wTop: 'rgba(150,192,196,0.65)', wBot: 'rgba(96,132,118,0.8)', surf: 'rgba(255,255,255,0.85)', m1: '#C9A878', m2: '#B38F60', m3: '#9C794E', land: '#D8BD8E', algae: '#4F8A35', cloud: '#6F7780', rain: 'rgba(70,100,130,0.4)', rock: '#8E8A80', stick: '#7A5C3E', crack: 'rgba(90,60,30,0.45)', speck: 'rgba(60,70,50,0.2)', egg: 'rgba(255,255,255,0.65)', eggLine: 'rgba(90,110,130,0.5)' };
   }
+  let bg = null;
+  function buildBg() {
+    bg = document.createElement('canvas'); bg.width = cv.width; bg.height = cv.height; const g = bg.getContext('2d'); g.setTransform(cv.width / VW, 0, 0, cv.height / VH, 0, 0);
+    [[0, P.m1], [16, P.m2], [42, P.m3]].forEach(([o, c]) => { g.beginPath(); g.moveTo(0, VH); for (let x = 0; x <= VW; x += 6) g.lineTo(x, floor(x) + o + (o ? Math.sin(x * 0.02 + o) * 3 : 0)); g.lineTo(VW, VH); g.fillStyle = c; g.fill(); });
+  }
   function resize() {
     W = wrap.getBoundingClientRect().width; k = W / VW;
     const DPR = Math.min(2, window.devicePixelRatio || 1);
     cv.style.height = (W * VH / VW) + 'px';
     cv.width = Math.round(W * DPR); cv.height = Math.round(W * VH / VW * DPR);
-    ctx.setTransform(DPR * k, 0, 0, DPR * k, 0, 0);
+    ctx.setTransform(DPR * k, 0, 0, DPR * k, 0, 0); buildBg();
   }
   const PROPS = [{ t: 'rock', x: 455, r: 20 }, { t: 'rock', x: 745, r: 16 }, { t: 'stick', x: 560, len: 80, a: -0.25 }, { t: 'stick', x: 655, len: 56, a: 0.3 }];
   const TUFTS = Array.from({ length: 40 }, (_, i) => ({ x: 360 + i * 12, s: R(i) * TAU }));
@@ -73,9 +79,9 @@
 
   /* ---------- cast ---------- */
   function reset() {
-    T = 0; drops = []; bits = []; gulps = [];
+    T = 0; clock = 0; drops = []; bits = []; gulps = [];
     eggs = Array.from({ length: 48 }, (_, i) => { const c = i % 4, x = [535, 575, 625, 665][c] + (R(i) - 0.5) * 30; return { x, dy: 7 + R(i + 5) * 14, t: 18.3 + i * 0.095 }; });
-    tads = Array.from({ length: 8 }, (_, i) => ({ i, role: i % 2 ? 'omni' : 'carn', state: 'egg', x: 0, y: 0, fs: 1, face: 1, pitch: 0, c: 0.45, dev: 0, gape: 0, dead: 0, fade: 1, ph: R(i + 40) * TAU, side: (i % 4) < 2 ? -1 : 1 }));
+    tads = Array.from({ length: 8 }, (_, i) => ({ i, role: i % 2 ? 'omni' : 'carn', state: 'egg', x: 0, y: 0, fs: 1, face: 1, pitch: 0, c: 0.45, dev: 0, gape: 0, dead: 0, fade: 1, ph: R(i + 40) * TAU, side: i < 4 ? -1 : 1 }));  // left half of the pond exits left, right half exits right
     const nS = scen === 'dry' ? 12 : 4, carns = tads.filter(t => t.role === 'carn');
     shrimp = Array.from({ length: nS }, (_, i) => ({ i, ph: R(i + 60) * TAU, cx: 470 + R(i + 70) * 260, born: 23 + i * 0.3, by: carns[i % 4], eatAt: 35 + Math.floor(i / 4) * 3.4 + (i % 4) * 0.8, alive: true, x: 0, y: 0, fs: 1, face: 1 }));
     lastStage = -1; caption();
@@ -119,9 +125,12 @@
     return null;
   }
 
+  function room() { const q = (sd) => tads.filter(o => o.side === sd && (o.state === 'meta' || o.state === 'emerge')).length;
+    return Math.min(edge(1) - 70 - 52 * q(1), 840) - Math.max(edge(-1) + 70 + 52 * q(-1), 360); }
   function slot(t, list) { // every swimming tadpole gets its own evenly spaced x across the water that's left
     const n = list.length, idx = list.indexOf(t);
-    const xl = edge(-1) + 55, xr = edge(1) - 55, x = n ? lerp(xl, xr, (idx + 0.5) / n) : 600;
+    const q = (sd) => tads.filter(o => o.side === sd && (o.state === 'meta' || o.state === 'emerge')).length; // leave room for metamorphs queuing at each shore
+    const xl = Math.max(edge(-1) + 70 + 52 * q(-1), 360), xr = Math.min(edge(1) - 70 - 52 * q(1), 840), x = n ? lerp(xl, Math.max(xl, xr), (idx + 0.5) / n) : 600;
     const y = t.role === 'carn' ? lerp(wl + 26, floor(x) - 30, 0.3) : floor(x) - 20;
     return { x, y: Math.max(wl + 18, y) };
   }
@@ -132,12 +141,14 @@
     const s = size(t);
     if (t.state === 'egg') { if (T > 29 + t.i * 0.25) { const e = eggs[t.i * 6]; t.state = 'swim'; t.x = e.x; t.y = floor(e.x) - e.dy; } else return; }
     t.c = t.role === 'carn' ? lerp(0.45, 1, win(T, 33, 44)) : lerp(0.45, 0.05, win(T, 33, 44));
-    t.dev = dry ? (t.role === 'carn' ? win(T, 41, 52) : 0.5 * win(T, 41, 64)) : (t.role === 'carn' ? 0.4 * win(T, 41, 51) : win(T, 47, 61));
-    const starve = !dry && t.role === 'carn' ? win(T, 52, 59) : 0;
+    const rank = t.i < 4 ? Math.floor(t.i / 2) : 3 - Math.floor(t.i / 2), o = rank * (t.role === 'carn' ? 2.2 : 3); // animals nearest the shore go first // each animal on its own schedule
+    t.dev = dry ? (t.role === 'carn' ? win(T, 40 + o, 50 + o) : 0.5 * win(T, 41, 64)) : (t.role === 'carn' ? 0.4 * win(T, 41, 51) : win(T, 48 + o, 59 + o));
+    const starve = !dry && t.role === 'carn' ? win(T, 50, 56) : 0;
+    const px = t.x, py = t.y;
     if (t.state === 'swim') {
       const sl = slot(t, row), gap = (edge(1) - edge(-1) - 110) / Math.max(1, row.length), sweep = Math.min(16, gap * 0.15) * (1 - starve);
       let tx = sl.x + Math.sin(clock * 0.55 + t.ph) * sweep, ty = sl.y + Math.sin(clock * 1.1 + t.ph) * 3;
-      if (starve) ty = lerp(ty, floor(tx) - 14, starve);
+      if (starve) ty = lerp(ty, floor(tx) - 70, starve); // weakening carnivores sag; they sink the rest of the way once dead
       const nx = damp(t.x, tx, 1.6, dt), ny = damp(t.y, ty, 1.6, dt), vx = nx - t.x;
       if (Math.abs(vx) > 0.04 * 60 * dt) t.face = vx > 0 ? 1 : -1;
       t.gape = 0;
@@ -147,22 +158,31 @@
       t.pitch = damp(t.pitch, t.role === 'omni' && T > 33 ? 0.3 : 0, 3, dt);
       t.x = nx; t.y = ny;
       if (starve >= 1) { t.state = 'dead'; t.dead = 0; }
-      else if (t.dev > 0.9) { t.state = 'meta'; t.side = t.x < 600 ? -1 : 1; }
-      else if (dry && (wl > 395 || (T > 58 && edge(1) - edge(-1) - 110 < 62 * row.length))) { t.state = 'dead'; t.dead = 0; }
-    } else if (t.state === 'meta') {      // swim to the shallows on its side
-      const tx = edge(t.side) - t.side * 14, ty = wl + 8;
-      t.x = damp(t.x, tx, 1.8, dt); t.y = damp(t.y, ty, 1.8, dt); t.face = t.side; t.fs = damp(t.fs, t.side, 5, dt); t.pitch = damp(t.pitch, 0, 4, dt);
-      if (Math.abs(t.x - tx) < 4) { t.state = 'emerge'; t.k = 0; t.x0 = t.x; }
-    } else if (t.state === 'emerge') {    // crawl up the beach, tail shrinking
-      t.k = Math.min(1, t.k + dt / 5); t.x = lerp(t.x0, edge(t.side) + t.side * 30, ease(t.k)); t.y = floor(t.x) - s * 0.62;
+      else if (t.dev > 0.9) { t.state = 'meta'; t.m = 0; t.mx = t.x; t.my = t.y; t.ord = tads.filter(o => o !== t && o.side === t.side && (o.state === 'meta' || o.state === 'emerge')).length; }
+      else if (dry && t.role === 'omni' && (wl > 395 || (room() < 56 * row.filter(o => o.role === 'omni').length))) { t.state = 'dead'; t.dead = 0; }
+    } else if (t.state === 'meta') {      // eased swim to its own waiting spot in the shallows (queued by arrival)
+      t.m = Math.min(1, t.m + dt / 4);
+      const tx = edge(t.side) - t.side * (18 + 52 * t.ord), ty = wl + 9;
+      const up = ease(Math.min(1, t.m / 0.35)), along = ease(clamp((t.m - 0.25) / 0.75, 0, 1)); // rise to the surface, then travel along it
+      if (t.role === 'omni') { t.x = lerp(t.mx, tx, ease(t.m)); t.y = Math.max(ty, Math.min(lerp(t.my, ty, ease(t.m)), floor(t.x) - 50)); } // swim low over the bottom toward shore
+      else { t.x = lerp(t.mx, tx, along); t.y = lerp(t.my, ty, up); }
+      t.face = t.side; t.fs = damp(t.fs, t.side, 5, dt); t.pitch = damp(t.pitch, 0, 4, dt);
+      const busy = tads.some(o => o !== t && o.side === t.side && o.state === 'emerge');
+      if (t.m >= 1 && !busy && !tads.some(o => o !== t && o.side === t.side && o.state === 'meta' && o.ord < t.ord)) {
+        t.state = 'emerge'; t.k = 0; t.x0 = t.x; t.y0 = t.y; t.spot = edge(t.side) + t.side * 34;
+      }
+    } else if (t.state === 'emerge') {    // crawl out to a fixed spot on the beach while the tail shrinks
+      t.k = Math.min(1, t.k + dt / 5); const u = ease(t.k);
+      t.x = lerp(t.x0, t.spot, u); t.y = lerp(t.y0, floor(t.x) - s * 0.6, ease(Math.min(1, t.k * 1.6)));
       if (t.k >= 1) { t.state = 'hop'; t.h = 0; t.x0 = t.x; }
-    } else if (t.state === 'hop') {       // toadlet hops off over the bank
-      t.h += dt / 3; t.x = t.x0 + t.side * t.h * 260; t.y = floor(clamp(t.x, 0, VW)) - s * 0.5 - Math.abs(Math.sin(t.h * Math.PI * 4)) * 14;
+    } else if (t.state === 'hop') {       // toadlet hops away over the bank
+      t.h += dt / 3.2; t.x = t.x0 + t.side * ease(t.h) * 240; t.y = floor(clamp(t.x, 0, VW)) - s * 0.6 - Math.abs(Math.sin(t.h * Math.PI * 4)) * 14;
       t.fade = 1 - win(t.h, 0.75, 1); if (t.h >= 1) t.fade = 0;
     } else if (t.state === 'dead') {      // belly up, sinking or lying on the mud, then fading
       t.dead += dt; t.y = damp(t.y, floor(t.x) - s * 0.5, 1.2, dt); t.pitch = damp(t.pitch, 0, 2, dt);
       t.fade = 1 - win(t.dead, 11, 14);
     }
+    const v = Math.hypot(t.x - px, t.y - py) / Math.max(dt, 1e-4); t.tp = (t.tp || 0) + dt * (t.state === 'dead' ? 0 : 4 + Math.min(9, v * 0.35));
   }
 
   /* ---------- the frogs (all of the courtship happens in the water) ---------- */
@@ -192,11 +212,16 @@
     return out;
   }
 
-  let lastStage = -1;
+  let lastStage = -1, tickFor = '';
+  function ticks(list) {
+    const bar = $('.pond-progress'); if (!bar || tickFor === scen) return; tickFor = scen;
+    bar.querySelectorAll('b').forEach(b => b.remove());
+    list.forEach(([t]) => { if (!t) return; const b = document.createElement('b'); b.style.left = (100 * t / ENDT[scen]) + '%'; bar.appendChild(b); });
+  }
   function caption() {
     const list = STAGES.common.concat(STAGES[scen]); let idx = 0; list.forEach((s, i) => { if (T >= s[0]) idx = i; });
     if (barEl) barEl.style.width = (100 * clamp(T / ENDT[scen], 0, 1)).toFixed(2) + '%';
-    if (idx !== lastStage) { lastStage = idx; if (capEl) capEl.textContent = list[idx][1]; if (stepEl) stepEl.textContent = `${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`; }
+    if (idx !== lastStage) { lastStage = idx; if (capEl) { const txt = list[idx][1]; capEl.style.opacity = 0; clearTimeout(caption.t); caption.t = setTimeout(() => { capEl.textContent = txt; capEl.style.opacity = 1; }, 220); } ticks(list); if (stepEl) stepEl.textContent = `${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`; }
   }
 
   /* ---------- drawing ---------- */
@@ -209,7 +234,7 @@
       ctx.fillStyle = P.speck; SPECKS.forEach(p => { if (p.y > wl + 3 && p.y < floor(p.x)) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); } });
     }
     // ground
-    [[0, P.m1], [16, P.m2], [42, P.m3]].forEach(([o, c]) => { ctx.beginPath(); ctx.moveTo(0, VH); for (let x = 0; x <= VW; x += 10) ctx.lineTo(x, floor(x) + o + (o ? Math.sin(x * 0.02 + o) * 3 : 0)); ctx.lineTo(VW, VH); ctx.fillStyle = c; ctx.fill(); });
+    if (bg) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(bg, 0, 0); ctx.restore(); }
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, VW, wl + 1); ctx.clip(); ctx.fillStyle = P.land; ctx.beginPath(); ctx.moveTo(0, VH); for (let x = 0; x <= VW; x += 10) ctx.lineTo(x, floor(x)); ctx.lineTo(VW, VH); ctx.fill(); ctx.restore();
     const crack = 1 - win(DRY - wl, 0, 60);
     if (crack > 0) { ctx.strokeStyle = P.crack; ctx.lineWidth = 1; ctx.globalAlpha = crack; for (let x = 380; x < 820; x += 28) { const y = floor(x); ctx.beginPath(); ctx.moveTo(x, y + 1); ctx.lineTo(x + 7, y + 9); ctx.lineTo(x + 2, y + 16); ctx.stroke(); } ctx.globalAlpha = 1; }
@@ -249,12 +274,12 @@
   function drawTad(t) {
     if (t.fade <= 0) return;
     if (t.state === 'emerge' || t.state === 'hop') return drawFroglet(t);
-    const s = size(t), c = t.c, dead = t.state === 'dead', starve = scen === 'wet' && t.role === 'carn' ? win(T, 52, 59) : 0;
+    const s = size(t), c = t.c, dead = t.state === 'dead', starve = scen === 'wet' && t.role === 'carn' ? win(T, 50, 56) : 0;
     ctx.save(); ctx.globalAlpha = t.fade; ctx.translate(t.x, t.y);
     ctx.scale(Math.abs(t.fs) < 0.15 ? Math.sign(t.fs || 1) * 0.15 : t.fs, dead ? -1 : 1); ctx.rotate(t.pitch);
     const body = mix(mix('#8D8A4E', '#D9703F', c), '#A39E92', Math.max(starve * 0.8, dead ? 0.6 : 0)), line = c > 0.5 ? '#7A3A1E' : '#4C4A2A';
     const N = 12, L = s * lerp(2.6, 2.2, c), amp = dead ? 0 : s * 0.36, pts = [];
-    for (let i = 0; i <= N; i++) { const u = i / N; pts.push([-s * 0.7 - L * u, Math.sin(clock * 8 + t.ph - u * 5.5) * amp * Math.pow(u, 1.3)]); }
+    for (let i = 0; i <= N; i++) { const u = i / N; pts.push([-s * 0.7 - L * u, Math.sin((t.tp || 0) + t.ph - u * 5.5) * amp * Math.pow(u, 1.3)]); }
     ctx.fillStyle = c > 0.5 ? 'rgba(235,165,122,0.55)' : 'rgba(190,185,140,0.55)'; ctx.beginPath();
     pts.forEach(([x, y], i) => { const fin = s * 0.46 * Math.sin(Math.PI * Math.pow(i / N, 0.7)) + 0.01; i ? ctx.lineTo(x, y - fin) : ctx.moveTo(x, y - fin); });
     for (let i = N; i >= 0; i--) { const fin = s * 0.4 * Math.sin(Math.PI * Math.pow(i / N, 0.7)) + 0.01; ctx.lineTo(pts[i][0], pts[i][1] + fin); } ctx.fill();
@@ -322,10 +347,10 @@
   }
 
   /* ---------- loop + controls ---------- */
-  let last = 0, raf = 0;
+  let last = 0, raf = 0, acc = 0; const FIX = 1 / 120;
   function frame(now) {
-    raf = 0; const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
-    if (!paused) { const n = speed; for (let i = 0; i < n; i++) step(dt); }   // fast-forward = several steps per frame, same smoothness
+    raf = 0; const dt = Math.min(0.1, (now - (last || now)) / 1000); last = now;
+    if (!paused) { acc += dt * speed; let n = 0; while (acc >= FIX && n++ < 40) { step(FIX); acc -= FIX; } }   // fixed 120 Hz story ticks
     draw(); if (running) raf = requestAnimationFrame(frame);
   }
   function start() { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
@@ -344,7 +369,7 @@
   new ResizeObserver(() => { resize(); draw(); }).observe(wrap);
   new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.05 }).observe(wrap);
   document.addEventListener('visibilitychange', sync);
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { palette(); draw(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { palette(); buildBg(); draw(); });
   window.__pond = { jump(t, sc) { if (sc) { scen = sc; autoAlt = false; } reset(); while (T < t) step(1 / 30); draw(); }, state: () => tads.map(t => [t.role, t.state, Math.round(t.x), Math.round(t.y)]),
-    minSep(sc) { scen = sc; autoAlt = false; reset(); let m = 1e9, at = 0; while (T < ENDT[sc] - 0.1) { step(1 / 30); const sw = T < 32 ? [] : tads.filter(t => t.state === "swim"); for (let i = 0; i < sw.length; i++) for (let j = i + 1; j < sw.length; j++) { const d = Math.hypot(sw[i].x - sw[j].x, sw[i].y - sw[j].y); if (d < m) { m = d; at = T; } } } return [Math.round(m), at.toFixed(1)]; } };
+    minSep(sc) { scen = sc; autoAlt = false; reset(); let m = 1e9, at = ''; while (T < ENDT[sc] - 0.1) { step(1 / 30); const sw = T < 32 ? [] : tads.filter(t => !["egg", "dead"].includes(t.state) && t.fade > 0.05); for (let i = 0; i < sw.length; i++) for (let j = i + 1; j < sw.length; j++) { const d = Math.hypot(sw[i].x - sw[j].x, sw[i].y - sw[j].y); if (d < m) { m = d; at = T + ' ' + sw[i].role + sw[i].state + '/' + sw[j].role + sw[j].state; } } } return [Math.round(m), at]; } };
 })();
