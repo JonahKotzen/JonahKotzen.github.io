@@ -28,7 +28,7 @@ const dots=document.getElementById('hl-dots'),count=document.getElementById('hl-
 animals.forEach(a=>{const c=document.createElement('i');c.title=a.name;c.setAttribute('aria-label',a.name+' (not found yet)');a.chip=c;dots.appendChild(c)});
 
 function resize(){
-  const r=hero.getBoundingClientRect();W=r.width;H=r.height;DPR=Math.min(2,devicePixelRatio||1);
+  const r=hero.getBoundingClientRect();if(!r.width||!r.height)return;W=r.width;H=r.height;DPR=Math.min(2,devicePixelRatio||1);
   mobile=W<760;hy=H*(mobile?.6:.5);vx=W*(mobile?.5:.66);hwk=mobile?.55:.42;
   for(const c of [cv,bg,sky,scn,bm]){c.width=W*DPR;c.height=H*DPR}
   for(const x of [ctx,bx,sx,nx,mx])x.setTransform(DPR,0,0,DPR,0,0);
@@ -155,6 +155,7 @@ function found(a,t,quiet){if(a.found)return;a.found=true;a.at=quiet?-99:t;a.chip
 function pos(a,t){const lat=a.move?a.move(t):a.lat;return P(lat,a.d)}
 
 function draw(t,dt){
+  if(!W||!H)return;
   const now=performance.now();
   // beam target: pointer, or auto-sweep when idle / on touch
   const idle=now-lastMove>3500;
