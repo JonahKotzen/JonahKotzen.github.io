@@ -246,6 +246,17 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 .sub{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 16px}
 .sub h3{font-size:1.45rem}
 .sub + .masonry{margin-bottom:48px}
+.sub.gap{margin-top:72px}
+#about .sub.gap:first-child{margin-top:0}
+.pond-sec{margin-top:8px;border-top:1px solid var(--line)}
+nav ul a.nav-cv{color:var(--accent);border:1px solid var(--accent);padding:4px 10px;border-radius:999px}
+nav ul a.nav-cv:hover{background:var(--accent);color:var(--bg)}
+.glance{margin-top:28px;border:1px solid var(--line);background:var(--paper);padding:0 20px}
+.glance summary{cursor:pointer;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding:14px 0;list-style:none}
+.glance summary::-webkit-details-marker{display:none}
+.glance summary::before{content:"+ "}
+.glance[open] summary::before{content:"− "}
+.glance .facts{padding-bottom:20px}
 .masonry{columns:3 280px;column-gap:12px}
 .masonry figure{margin:0 0 12px;break-inside:avoid;position:relative;overflow:hidden;background:var(--paper);border:1px solid var(--line)}
 .masonry a{display:block}
@@ -311,15 +322,11 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <a class="brand" href="#top">J. L. B. Kotzen</a>
     <ul>
       <li><a href="#research">Research</a></li>
-      <li><a href="#talks">Talks &amp; posters</a></li>
-      <li><a href="#service">Mentoring &amp; service</a></li>
-      <li><a href="#cv">CV</a></li>
-      <li><a href="#press">Press</a></li>
-      <li><a href="#photos">Photos</a></li>
-      <li><a href="#videos">Videos</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#interests">Interests</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#service">Mentoring</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a class="nav-cv" href="media/docs/Kotzen_CV.pdf">CV ↓</a></li>
     </ul>
   </div>
 </nav>
@@ -360,25 +367,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </ul></div>
 </aside>
 
-<section class="pond-sec" aria-label="Interactive pond">
-  <div id="pond" class="pond">
-    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: a monsoon fills a dry pond, spadefoots lay eggs, and tadpoles that eat shrimp become carnivores while algae-eaters become omnivores. In a fast-drying pond the faster-developing carnivores escape; in a long-lasting pond with no shrimp, the omnivores win."></canvas>
-    <div class="pond-hud wrap"><span class="mono">A monsoon pond · Portal, AZ</span></div>
-    <p class="pond-toast" role="status" aria-live="polite"></p>
-  </div>
-  <div class="pond-bar wrap">
-    <div class="pond-progress" aria-hidden="true"><i></i></div>
-    <p class="pond-story"><span class="pond-step mono"></span><span class="pond-cap" aria-live="polite"></span></p>
-    <div class="ctrls">
-      <div class="seg" role="group" aria-label="Choose an ending">
-        <button type="button" data-scen="dry" aria-pressed="true">Fast-drying pond</button>
-        <button type="button" data-scen="wet" aria-pressed="false">Long-lasting pond</button>
-      </div>
-      <button class="ctl icon" type="button" data-act="pause" aria-pressed="false" aria-label="Pause">❚❚ Pause</button>
-      <button class="ctl icon" type="button" data-act="ff" aria-pressed="false" aria-label="Fast-forward">⏩ Fast-forward</button>
-    </div>
-  </div>
-</section>
+
 
 
 
@@ -396,12 +385,103 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <figcaption><span>Carnivore · Omnivore · same clutch</span><span>Photo: <a href="https://tarheels.live/ecoevodevolab/" style="color:inherit">David Pfennig</a></span></figcaption>
       </figure>
     </div>
+    <div class="sub gap indent"><h3>Watch it play out</h3><p class="mono">Two ponds, two winners</p></div>
+  </div>
+  <div class="pond-sec" id="pond-sec" aria-label="Interactive pond">
+  <div id="pond" class="pond">
+    <canvas role="img" aria-label="Animated cross-section of a desert monsoon pond: a monsoon fills a dry pond, spadefoots lay eggs, and tadpoles that eat shrimp become carnivores while algae-eaters become omnivores. In a fast-drying pond the faster-developing carnivores escape; in a long-lasting pond with no shrimp, the omnivores win."></canvas>
+    <div class="pond-hud wrap"><span class="mono">A monsoon pond · Portal, AZ</span></div>
+    <p class="pond-toast" role="status" aria-live="polite"></p>
+  </div>
+  <div class="pond-bar wrap">
+    <div class="pond-progress" aria-hidden="true"><i></i></div>
+    <p class="pond-story"><span class="pond-step mono"></span><span class="pond-cap" aria-live="polite"></span></p>
+    <div class="ctrls">
+      <div class="seg" role="group" aria-label="Choose an ending">
+        <button type="button" data-scen="dry" aria-pressed="true">Fast-drying pond</button>
+        <button type="button" data-scen="wet" aria-pressed="false">Long-lasting pond</button>
+      </div>
+      <button class="ctl icon" type="button" data-act="pause" aria-pressed="false" aria-label="Pause">❚❚ Pause</button>
+      <button class="ctl icon" type="button" data-act="ff" aria-pressed="false" aria-label="Fast-forward">⏩ Fast-forward</button>
+    </div>
+  </div>
+</div>
+  <div class="wrap" id="videos">
+    <div class="sub gap indent"><h3>Feeding, frame by frame</h3><p class="mono">High-speed video</p></div>
+    <div class="videos">
+      <article class="vid wide">
+        <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles scraping algae and striking at fairy shrimp"></video></div>
+        <div class="cap"><h3>Scraping and striking at 1,000 frames per second</h3><p>Tadpoles rasping algae (slowed 17×), then lunging at fairy shrimp (slowed 167×). This is the raw material for my performance measurements.</p></div>
+      </article>
+      <article class="vid sq">
+        <div class="media"><video src="media/jaw-closeup.mp4" poster="media/jaw-closeup-poster.jpg" autoplay muted loop playsinline aria-label="Slow-motion close-up of a tadpole's jaws working at the bottom of a tank, side view"></video></div>
+        <div class="cap"><h3>Jaws up close</h3><p>A side-on look at a tadpole working its beak along the bottom of the tank, in slow motion.</p></div>
+      </article>
+      <article class="vid sq">
+        <div class="media"><video src="media/tadpole-headon.mp4" poster="media/tadpole-headon-poster.jpg" autoplay muted loop playsinline aria-label="A spadefoot tadpole swimming toward the camera in a clear tank"></video></div>
+        <div class="cap"><h3>Head-on</h3><p>A spadefoot tadpole swims up to the glass in the filming tank.</p></div>
+      </article>
+      <article class="vid sq">
+        <div class="media"><video src="media/shrimp-cue.mp4" autoplay muted loop playsinline aria-label="Fairy shrimp swimming among spadefoot embryos"></video></div>
+        <div class="cap"><h3>Shrimp ahead</h3><p>Spadefoot embryos developing alongside live shrimp, the cue in my anticipatory plasticity experiments.</p></div>
+      </article>
+    </div>
   </div>
 </section>
 
-<section id="talks">
+<section id="work">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">02 / Talks &amp; posters</p><h2>Presentations</h2></div>
+    <div class="sec-head"><p class="mono">02 / Work</p><h2>Papers, talks &amp; press</h2></div>
+    <div class="indent" id="cv">
+      <div class="cv-row">
+        <a class="btn" href="media/docs/Kotzen_CV.pdf">Download CV (PDF)</a>
+        <a class="btn ghost" href="https://orcid.org/0009-0006-8403-7370">ORCID 0009-0006-8403-7370</a>
+      </div>
+      <p class="docs"><span>Proposals</span>
+        <a href="media/docs/grfp-2026-research-plan.pdf">NSF GRFP research plan · 2026 fellowship</a>
+        <a href="media/docs/grfp-2025-research-plan.pdf">NSF GRFP research plan · 2025 honorable mention</a>
+        <a href="media/docs/swrs-2026-proposal.pdf">SWRS field research award proposal · 2026</a></p>
+      <details class="glance"><summary>CV at a glance</summary>
+      <div class="facts">
+        <div class="fact"><b>Education</b>
+          <span>PhD, Evolution, Ecology &amp; Organismal Biology, UNC Chapel Hill, expected 2030. Advisor: <a href="https://tarheels.live/ecoevodevolab/">David Pfennig</a></span>
+          <span>BS Biology &amp; BA Classical Studies, Boston College, 2024, summa cum laude</span></div>
+        <div class="fact"><b>Grants &amp; fellowships</b>
+          <span><a href="media/docs/grfp-2026-research-plan.pdf">NSF Graduate Research Fellowship</a>, 2026–2029</span>
+          <span><a href="media/docs/swrs-2026-proposal.pdf">SWRS Graduate Field Research Award</a> (AMNH), 2026</span>
+          <span>NSF GRFP Honorable Mention, 2025</span></div>
+        <div class="fact"><b>Teaching</b>
+          <span>TA, Evolutionary Mechanisms Lab (BIOL 471L), UNC, Spring 2026</span>
+          <span>TA, Animal Behavior Lab (BIOL 278L), UNC, Fall 2025</span>
+          <span>TA, Ecology &amp; Evolution (250+ students), Boston College, 2022</span></div>
+        <div class="fact"><b>Honors</b>
+          <span>Phi Beta Kappa · Max Wainer Prize in Classics · Harry W. Smith Award</span>
+          <span>Fulbright semi-finalist · Truman Scholarship finalist</span></div>
+        <div class="fact"><b>Leadership &amp; service</b>
+          <span>President, UNC Biology Graduate Student Association, 2026–</span>
+          <span>Website administrator, Carolina Biodiversity Collaborative, 2026–</span>
+          <span>Student Body President, Boston College (UGBC)</span></div>
+        <div class="fact"><b>Methods</b>
+          <span>High-speed videography (1,000+ fps, mirror-based dual view) · DLTdv8 · microCT &amp; 3D Slicer/SlicerMorph · geometric morphometrics · biomechanical modeling · R · Fiji/ImageJ</span>
+          <span>BARC Microscopy Image Analysis Workshop, 2025</span></div>
+      </div>
+    
+      </details>
+    </div>
+    <div class="sub gap indent" id="publications"><h3>Papers</h3><p class="mono">In preparation</p></div>
+    <div class="entries indent">
+      <div class="entry">
+        <div class="when">In prep</div>
+        <div class="what"><strong>Kinematics and linkage mechanics of the lower jaw in ray-finned fishes: a compliant symphyseal joint facilitates buccal expansion</strong> <span class="pill">Article</span>
+          <span class="meta">Kenaley CP, <span class="me">Kotzen JLB</span>, et al.</span></div>
+      </div>
+      <div class="entry">
+        <div class="when">In prep</div>
+        <div class="what"><strong>How development forecasts the future: the evolution of anticipatory plasticity</strong> <span class="pill">Review</span>
+          <span class="meta"><span class="me">Kotzen JLB</span>, et al.</span></div>
+      </div>
+    </div>
+    <div class="sub gap indent" id="talks"><h3>Talks &amp; posters</h3><p class="mono">Presentations</p></div>
     <div class="indent">
       <div class="feature">
         <a class="thumb" href="media/poster.jpg"><img src="media/poster-session.jpg" alt="Jonah standing beside his poster, The Performance Basis of Disruptive Selection in Spadefoot Toad Tadpoles, at the regional SICB meeting" loading="lazy"></a>
@@ -451,6 +531,16 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
           <span class="meta">Boston College · to 2,500+ incoming students</span></div>
       </div>
     </div>
+    <div class="sub gap indent" id="press"><h3>Press</h3><p class="mono">In the news</p></div>
+    <div class="entries indent">
+      <div class="entry"><div class="when">May 2026</div><div class="what"><strong><a href="https://www.unc.edu/posts/2026/05/18/23-student-researchers-receive-2026-nsf-fellowships/">23 student researchers receive 2026 NSF fellowships</a></strong><span class="meta">UNC-Chapel Hill</span></div></div>
+      <div class="entry"><div class="when">2025</div><div class="what"><strong><a href="https://bio.unc.edu/news/graduate-student-appreciation-week-2025-nsf-grfp-awardees-honorable-mentions/">Graduate Student Appreciation Week 2025: NSF GRFP awardees &amp; honorable mentions</a></strong><span class="meta">UNC Department of Biology · honorable mention</span></div></div>
+      <div class="entry"><div class="when">May 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/seniors-2024.html">Seniors to Remember</a></strong><span class="meta">Boston College News</span></div></div>
+      <div class="entry"><div class="when">Feb 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/profile-of-ugbc-president-jonah-kotzen.html">UGBC president Jonah Kotzen reflects on years at the Heights</a></strong><span class="meta">Boston College News · profile</span></div></div>
+      <div class="entry"><div class="when">Nov 2023</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2023/fall/gratitude.html">Gratitude</a></strong><span class="meta">Boston College · Thanksgiving video, narrator</span></div></div>
+      <div class="entry"><div class="when">Apr 2023</div><div class="what"><strong><a href="https://www.bcheights.com/2023/04/04/kotzen-heckelman-win-ugbc-pres-vp-election/">Kotzen, Heckelman win UGBC Pres., VP election</a></strong><span class="meta">The Heights</span></div></div>
+      <div class="entry"><div class="when">Mar 2023</div><div class="what"><strong><a href="https://www.bcheights.com/2023/03/26/kotzen-and-heckelman-acceptance-academics-activity-and-adjustment/">Kotzen and Heckelman: Acceptance, Academics, Activity, and Adjustment</a></strong><span class="meta">The Heights</span></div></div>
+    </div>
   </div>
 </section>
 
@@ -486,65 +576,29 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </section>
 
-<section id="cv">
+<section id="about">
   <div class="wrap">
-    <div class="sec-head"><p class="mono">04 / CV</p><h2>Curriculum vitae</h2></div>
-    <div class="indent">
-      <div class="cv-row">
-        <a class="btn" href="media/docs/Kotzen_CV.pdf">Download CV (PDF)</a>
-        <a class="btn ghost" href="https://orcid.org/0009-0006-8403-7370">ORCID 0009-0006-8403-7370</a>
-      </div>
-      <p class="docs"><span>Proposals</span>
-        <a href="media/docs/grfp-2026-research-plan.pdf">NSF GRFP research plan · 2026 fellowship</a>
-        <a href="media/docs/grfp-2025-research-plan.pdf">NSF GRFP research plan · 2025 honorable mention</a>
-        <a href="media/docs/swrs-2026-proposal.pdf">SWRS field research award proposal · 2026</a></p>
-      <div class="facts">
-        <div class="fact"><b>Education</b>
-          <span>PhD, Evolution, Ecology &amp; Organismal Biology, UNC Chapel Hill, expected 2030. Advisor: <a href="https://tarheels.live/ecoevodevolab/">David Pfennig</a></span>
-          <span>BS Biology &amp; BA Classical Studies, Boston College, 2024, summa cum laude</span></div>
-        <div class="fact"><b>Grants &amp; fellowships</b>
-          <span><a href="media/docs/grfp-2026-research-plan.pdf">NSF Graduate Research Fellowship</a>, 2026–2029</span>
-          <span><a href="media/docs/swrs-2026-proposal.pdf">SWRS Graduate Field Research Award</a> (AMNH), 2026</span>
-          <span>NSF GRFP Honorable Mention, 2025</span></div>
-        <div class="fact"><b>Teaching</b>
-          <span>TA, Evolutionary Mechanisms Lab (BIOL 471L), UNC, Spring 2026</span>
-          <span>TA, Animal Behavior Lab (BIOL 278L), UNC, Fall 2025</span>
-          <span>TA, Ecology &amp; Evolution (250+ students), Boston College, 2022</span></div>
-        <div class="fact"><b>Honors</b>
-          <span>Phi Beta Kappa · Max Wainer Prize in Classics · Harry W. Smith Award</span>
-          <span>Fulbright semi-finalist · Truman Scholarship finalist</span></div>
-        <div class="fact"><b>Leadership &amp; service</b>
-          <span>President, UNC Biology Graduate Student Association, 2026–</span>
-          <span>Website administrator, Carolina Biodiversity Collaborative, 2026–</span>
-          <span>Student Body President, Boston College (UGBC)</span></div>
-        <div class="fact"><b>Methods</b>
-          <span>High-speed videography (1,000+ fps, mirror-based dual view) · DLTdv8 · microCT &amp; 3D Slicer/SlicerMorph · geometric morphometrics · biomechanical modeling · R · Fiji/ImageJ</span>
-          <span>BARC Microscopy Image Analysis Workshop, 2025</span></div>
-      </div>
+    <div class="sec-head"><p class="mono">04 / About</p><h2>How I got here</h2></div>
+    <div class="route indent">
+      <ol>
+        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>I have always been drawn to the overlooked and misunderstood. I cried every time Godzilla died at the end of the movie, and when I got to pick my first pet, I picked an albino corn snake. The animals most people fear turned out to be the ones most worth understanding.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding his corn snake in front of its terrarium, a Snake Crossing sign on the wall" loading="lazy"><figcaption>Me and my first snake</figcaption></figure></li>
+        <li><div><span class="mono">Boca Raton, FL</span><b>Saint Andrew's School</b><p>High school and student body president. I was sure I was headed for medicine, but the animals kept pulling me back.</p></div><figure><img src="media/hs-speech.jpg" alt="Jonah in a navy blazer and red tie speaking at a wooden lectern" loading="lazy"><figcaption>At the lectern, Saint Andrew's</figcaption></figure></li>
+        <li><div><span class="mono">Chestnut Hill, MA</span><b>Boston College</b><p>My first Ecology &amp; Evolution course flipped a switch. I double majored in biology and classics, founded the BC Classics Club, served as UGBC student body president, and graduated summa cum laude. In Chris Kenaley's lab I got my first taste of research: how jaw shape predicts feeding performance in sunfishes.</p></div><figure><img src="media/bc-portrait.jpg" alt="Jonah in a navy blazer smiling with arms crossed on a balcony in a bright atrium" loading="lazy"><figcaption>Senior year at BC</figcaption></figure></li>
+        <li><div><span class="mono">Fort Lauderdale, FL</span><b>South Florida Wildlife Center</b><p>A gap year back home caring for the animals people usually overlook: turtles, skunks, opossums, songbirds, raptors and plenty of pelicans. It taught me that biology is also patience, observation and care. I also wrote my first GRFP proposal, on how snakes "walk" their jaws over prey, which earned an honorable mention.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin at SFWC</figcaption></figure></li>
+        <li><div><span class="mono">Chapel Hill, NC</span><b>UNC · D. Pfennig Lab</b><p>Everything comes together in spadefoot toads: misunderstood animals that spend most of their lives underground, with tadpoles that can grow into jaw-heavy carnivores. I'm an NSF GRFP Fellow studying how they anticipate the ponds they'll grow up in, with summers of midnight road cruising near Portal, AZ.</p></div><figure><img src="media/night-snake.jpg" alt="Jonah at night in a headlamp and backwards cap, holding a patterned snake and grinning" loading="lazy"><figcaption>Road cruising, Portal, AZ</figcaption></figure></li>
+      </ol>
     </div>
-  </div>
-</section>
-
-<section id="press">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">05 / Press</p><h2>In the news</h2></div>
-    <div class="entries indent">
-      <div class="entry"><div class="when">May 2026</div><div class="what"><strong><a href="https://www.unc.edu/posts/2026/05/18/23-student-researchers-receive-2026-nsf-fellowships/">23 student researchers receive 2026 NSF fellowships</a></strong><span class="meta">UNC-Chapel Hill</span></div></div>
-      <div class="entry"><div class="when">2025</div><div class="what"><strong><a href="https://bio.unc.edu/news/graduate-student-appreciation-week-2025-nsf-grfp-awardees-honorable-mentions/">Graduate Student Appreciation Week 2025: NSF GRFP awardees &amp; honorable mentions</a></strong><span class="meta">UNC Department of Biology · honorable mention</span></div></div>
-      <div class="entry"><div class="when">May 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/seniors-2024.html">Seniors to Remember</a></strong><span class="meta">Boston College News</span></div></div>
-      <div class="entry"><div class="when">Feb 2024</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2024/spring/profile-of-ugbc-president-jonah-kotzen.html">UGBC president Jonah Kotzen reflects on years at the Heights</a></strong><span class="meta">Boston College News · profile</span></div></div>
-      <div class="entry"><div class="when">Nov 2023</div><div class="what"><strong><a href="https://www.bc.edu/bc-web/sites/bc-news/articles/2023/fall/gratitude.html">Gratitude</a></strong><span class="meta">Boston College · Thanksgiving video, narrator</span></div></div>
-      <div class="entry"><div class="when">Apr 2023</div><div class="what"><strong><a href="https://www.bcheights.com/2023/04/04/kotzen-heckelman-win-ugbc-pres-vp-election/">Kotzen, Heckelman win UGBC Pres., VP election</a></strong><span class="meta">The Heights</span></div></div>
-      <div class="entry"><div class="when">Mar 2023</div><div class="what"><strong><a href="https://www.bcheights.com/2023/03/26/kotzen-and-heckelman-acceptance-academics-activity-and-adjustment/">Kotzen and Heckelman: Acceptance, Academics, Activity, and Adjustment</a></strong><span class="meta">The Heights</span></div></div>
+    <div class="sub gap indent" id="interests"><h3>Off the clock</h3><p class="mono">Interests</p></div>
+    <div class="interests indent">
+      <ul class="tags">
+        <li>Herping</li><li>Photography</li><li>Brazilian jiu-jitsu</li><li>Snakes &amp; spiders</li>
+        <li>Watch collecting</li><li>Thrifting</li><li>1960s–70s counterculture art &amp; music</li>
+        <li>Godzilla</li><li>Pickleball</li><li>Classics</li><li>Movies &amp; video games</li>
+      </ul>
+      <figure><img src="media/beetle.jpg" alt="Jonah grinning with a large horned beetle on his hand" loading="lazy"><figcaption>Making a new friend</figcaption></figure>
     </div>
-  </div>
-</section>
-
-<section id="photos">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">06 / Photos</p><h2>From the field</h2></div>
-
-    <div class="sub"><h3>Out there</h3><p class="mono">Fieldwork &amp; herping</p></div>
+    <div id="photos">
+    <div class="sub gap"><h3>Out there</h3><p class="mono">Fieldwork &amp; herping</p></div>
     <div class="masonry">
       <figure><a href="media/field-portrait.jpg"><img src="media/field-portrait.jpg" alt="Jonah smiling in a green forest, holding a black rat snake, wearing a cap embroidered with a snake" loading="lazy"></a><figcaption>Rat snake in the woods</figcaption></figure>
       <figure><a href="media/night-sky.jpg"><img src="media/night-sky.jpg" alt="The Milky Way over desert scrub and ocotillo at night, with Jonah lit by a headlamp in the corner" loading="lazy"></a><figcaption>Monsoon season nights</figcaption></figure>
@@ -562,7 +616,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       <figure><img src="media/tadpole-mouth.jpg" alt="Spadefoot tadpole seen head-on, showing its mouth" loading="lazy"><figcaption>Head-on</figcaption></figure>
     </div>
 
-    <div class="sub"><h3>Through the lens</h3><p class="mono">Wildlife photography</p></div>
+    <div class="sub gap"><h3>Through the lens</h3><p class="mono">Wildlife photography</p></div>
     <div class="masonry lens">
       <figure><a href="media/lens-toad.jpg"><img src="media/lens-toad.jpg" alt="Black-and-white photo of a large toad at night, its eye left in glowing orange" loading="lazy"></a><figcaption>Toad, eye in color</figcaption></figure>
       <figure><a href="media/lens-snake-macro.jpg"><img src="media/lens-snake-macro.jpg" alt="Macro portrait of a reddish-brown snake's head against a dark background" loading="lazy"></a><figcaption>Portrait</figcaption></figure>
@@ -579,71 +633,6 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       <figure><a href="media/paris-anatomy.jpg"><img src="media/paris-anatomy.jpg" alt="Rows of rhinoceros skeletons in the comparative anatomy gallery in Paris, lit by afternoon sun" loading="lazy"></a><figcaption>Comparative anatomy gallery, Paris</figcaption></figure>
       <figure><a href="media/lens-butterfly.jpg"><img src="media/lens-butterfly.jpg" alt="Orange and brown butterfly resting on blue fabric in bright sun" loading="lazy"></a><figcaption>Butterfly on blue</figcaption></figure>
     </div>
-  </div>
-</section>
-
-<section id="videos">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">07 / Videos</p><h2>Feeding, frame by frame</h2></div>
-    <div class="videos">
-      <article class="vid wide">
-        <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles scraping algae and striking at fairy shrimp"></video></div>
-        <div class="cap"><h3>Scraping and striking at 1,000 frames per second</h3><p>Tadpoles rasping algae (slowed 17×), then lunging at fairy shrimp (slowed 167×). This is the raw material for my performance measurements.</p></div>
-      </article>
-      <article class="vid sq">
-        <div class="media"><video src="media/jaw-closeup.mp4" poster="media/jaw-closeup-poster.jpg" autoplay muted loop playsinline aria-label="Slow-motion close-up of a tadpole's jaws working at the bottom of a tank, side view"></video></div>
-        <div class="cap"><h3>Jaws up close</h3><p>A side-on look at a tadpole working its beak along the bottom of the tank, in slow motion.</p></div>
-      </article>
-      <article class="vid sq">
-        <div class="media"><video src="media/tadpole-headon.mp4" poster="media/tadpole-headon-poster.jpg" autoplay muted loop playsinline aria-label="A spadefoot tadpole swimming toward the camera in a clear tank"></video></div>
-        <div class="cap"><h3>Head-on</h3><p>A spadefoot tadpole swims up to the glass in the filming tank.</p></div>
-      </article>
-      <article class="vid sq">
-        <div class="media"><video src="media/shrimp-cue.mp4" autoplay muted loop playsinline aria-label="Fairy shrimp swimming among spadefoot embryos"></video></div>
-        <div class="cap"><h3>Shrimp ahead</h3><p>Spadefoot embryos developing alongside live shrimp, the cue in my anticipatory plasticity experiments.</p></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="publications">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">08 / Publications</p><h2>Papers</h2></div>
-    <div class="entries indent">
-      <div class="entry">
-        <div class="when">In prep</div>
-        <div class="what"><strong>Kinematics and linkage mechanics of the lower jaw in ray-finned fishes: a compliant symphyseal joint facilitates buccal expansion</strong> <span class="pill">Article</span>
-          <span class="meta">Kenaley CP, <span class="me">Kotzen JLB</span>, et al.</span></div>
-      </div>
-      <div class="entry">
-        <div class="when">In prep</div>
-        <div class="what"><strong>How development forecasts the future: the evolution of anticipatory plasticity</strong> <span class="pill">Review</span>
-          <span class="meta"><span class="me">Kotzen JLB</span>, et al.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="interests">
-  <div class="wrap">
-    <div class="sec-head"><p class="mono">09 / Off the clock</p><h2>Interests</h2></div>
-    <div class="interests indent">
-      <ul class="tags">
-        <li>Herping</li><li>Photography</li><li>Brazilian jiu-jitsu</li><li>Snakes &amp; spiders</li>
-        <li>Watch collecting</li><li>Thrifting</li><li>1960s–70s counterculture art &amp; music</li>
-        <li>Godzilla</li><li>Pickleball</li><li>Classics</li><li>Movies &amp; video games</li>
-      </ul>
-      <figure><img src="media/beetle.jpg" alt="Jonah grinning with a large horned beetle on his hand" loading="lazy"><figcaption>Making a new friend</figcaption></figure>
-    </div>
-    <div class="route indent">
-      <h3>How I got here</h3>
-      <ol>
-        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>I have always been drawn to the overlooked and misunderstood. I cried every time Godzilla died at the end of the movie, and when I got to pick my first pet, I picked an albino corn snake. The animals most people fear turned out to be the ones most worth understanding.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding his corn snake in front of its terrarium, a Snake Crossing sign on the wall" loading="lazy"><figcaption>Me and my first snake</figcaption></figure></li>
-        <li><div><span class="mono">Boca Raton, FL</span><b>Saint Andrew's School</b><p>High school and student body president. I was sure I was headed for medicine, but the animals kept pulling me back.</p></div><figure><img src="media/hs-speech.jpg" alt="Jonah in a navy blazer and red tie speaking at a wooden lectern" loading="lazy"><figcaption>At the lectern, Saint Andrew's</figcaption></figure></li>
-        <li><div><span class="mono">Chestnut Hill, MA</span><b>Boston College</b><p>My first Ecology &amp; Evolution course flipped a switch. I double majored in biology and classics, founded the BC Classics Club, served as UGBC student body president, and graduated summa cum laude. In Chris Kenaley's lab I got my first taste of research: how jaw shape predicts feeding performance in sunfishes.</p></div><figure><img src="media/bc-portrait.jpg" alt="Jonah in a navy blazer smiling with arms crossed on a balcony in a bright atrium" loading="lazy"><figcaption>Senior year at BC</figcaption></figure></li>
-        <li><div><span class="mono">Fort Lauderdale, FL</span><b>South Florida Wildlife Center</b><p>A gap year back home caring for the animals people usually overlook: turtles, skunks, opossums, songbirds, raptors and plenty of pelicans. It taught me that biology is also patience, observation and care. I also wrote my first GRFP proposal, on how snakes "walk" their jaws over prey, which earned an honorable mention.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin at SFWC</figcaption></figure></li>
-        <li><div><span class="mono">Chapel Hill, NC</span><b>UNC · D. Pfennig Lab</b><p>Everything comes together in spadefoot toads: misunderstood animals that spend most of their lives underground, with tadpoles that can grow into jaw-heavy carnivores. I'm an NSF GRFP Fellow studying how they anticipate the ponds they'll grow up in, with summers of midnight road cruising near Portal, AZ.</p></div><figure><img src="media/night-snake.jpg" alt="Jonah at night in a headlamp and backwards cap, holding a patterned snake and grinning" loading="lazy"><figcaption>Road cruising, Portal, AZ</figcaption></figure></li>
-      </ol>
     </div>
   </div>
 </section>
