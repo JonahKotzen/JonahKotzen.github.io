@@ -17,35 +17,26 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- Favicon: ripple mark in the site accent -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232B3F9C'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='9' fill='none' stroke='%23DCE0F2' stroke-width='3'/%3E%3Cellipse cx='32' cy='36' rx='11' ry='4.5' fill='none' stroke='%23DCE0F2' stroke-width='3'/%3E%3Ccircle cx='32' cy='36' r='2.5' fill='%23fff'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#ECEEE7">
+<meta name="theme-color" content="#05081a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* Layout idea: a field notebook from a monsoon pond. Specimen-label metadata in mono,
-   a big grotesque name, one cobalt "dusk sky" accent, ripples behind the hero. */
+/* Layout idea: a field notebook from a night drive near Portal, AZ. Specimen-label metadata in mono,
+   a big grotesque name, cobalt accents on a night-sky palette, a flashlight hero. */
 :root{
-  --bg:#ECEEE7;
-  --paper:#F6F7F2;
-  --ink:#18201D;
-  --muted:#5C665F;
-  --line:#CDD2C7;
-  --accent:#2B3F9C;
-  --accent-soft:#DCE0F2;
+  /* night-drive palette: the whole site lives under the Portal night sky */
+  --bg:#070A1C;
+  --paper:#0D1230;
+  --ink:#E9ECF7;
+  --muted:#9AA3C7;
+  --line:#232A52;
+  --accent:#8C9DF0;
+  --accent-soft:#1E2652;
   --display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
   --body:"Newsreader", Georgia, "Times New Roman", serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#111613; --paper:#171D1A; --ink:#E6EAE3; --muted:#9AA59D; --line:#2A332E;
-    --accent:#8C9DF0; --accent-soft:#232A4A; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#111613; --paper:#171D1A; --ink:#E6EAE3; --muted:#9AA59D; --line:#2A332E;
-  --accent:#8C9DF0; --accent-soft:#232A4A; color-scheme: dark;
+  color-scheme: dark;
 }
 
 *{box-sizing:border-box}
@@ -74,7 +65,6 @@ nav ul a:hover{color:var(--accent)}
 
 /* hero */
 header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-#ripples{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hero .wrap{position:relative;padding-top:80px;padding-bottom:64px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end}
 @media (max-width:860px){ .hero .wrap{grid-template-columns:1fr;padding-top:56px} }
 .hero h1{font-size:clamp(3.4rem, 10vw, 8rem);font-weight:800;letter-spacing:-.035em}
@@ -87,7 +77,48 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 .hero figure img{width:100%;aspect-ratio:2.1/1;object-fit:cover}
 .hero figcaption{display:flex;justify-content:space-between;gap:12px;padding-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.03em}
 
-/* pond (tank 01) */
+/* night-drive hero */
+.hl{--hl-ink:#EDEFF7;--hl-mute:#9AA3C7;--hl-acc:#8C9DF0;--hl-acc2:#2B3F9C;position:relative;height:min(calc(100svh - 56px),780px);min-height:560px;overflow:hidden;cursor:none;touch-action:pan-y;background:#05081a;color:var(--hl-ink);border-bottom:1px solid #1c2350}
+.hl canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hl.truck{cursor:auto}
+.hl-copy{position:absolute;left:clamp(20px,5vw,72px);top:clamp(28px,8vh,88px);max-width:min(460px,40vw);pointer-events:none;z-index:2}
+.hl-kick{font:500 11px/1.4 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--hl-acc);display:flex;gap:10px;align-items:center;margin:0}
+.hl-kick i{width:7px;height:7px;border-radius:50%;background:#ffb347;box-shadow:0 0 10px #ffb347;animation:hl-blink 2.4s infinite}
+@keyframes hl-blink{50%{opacity:.25}}
+.hl h1{font:800 clamp(54px,8vw,108px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.035em;margin:14px 0 16px;color:var(--hl-ink)}
+.hl-bio{font-size:clamp(17px,1.5vw,20px);line-height:1.45;color:#C9CEE6;margin:0 0 22px}
+.hl-bio em{color:var(--hl-ink)}
+.hl-bio a{color:inherit;pointer-events:auto}
+.hl-btns{display:flex;gap:10px;flex-wrap:wrap;pointer-events:auto}
+.hl-btn{font:500 13px "JetBrains Mono",monospace;padding:10px 15px;border-radius:999px;border:1px solid #3a4680;color:var(--hl-ink);text-decoration:none;background:rgba(10,14,36,.6);cursor:pointer}
+.hl-btn.solid{background:var(--hl-acc2);border-color:var(--hl-acc2)}
+.hl-btn:hover{border-color:var(--hl-acc)}
+.hl-bar{position:absolute;left:clamp(20px,5vw,72px);bottom:18px;z-index:2;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font:500 11px "JetBrains Mono",monospace;color:var(--hl-mute);letter-spacing:.04em}
+.hl-mode{display:flex;padding:3px;border-radius:999px;border:1px solid #3a4680;background:rgba(10,14,36,.75)}
+.hl-mode button{font:500 12.5px "JetBrains Mono",monospace;color:var(--hl-mute);background:none;border:0;padding:8px 13px;border-radius:999px;cursor:pointer;transition:all .25s}
+.hl-mode button.on{background:var(--hl-acc2);color:#fff;box-shadow:0 0 14px rgba(140,157,240,.35)}
+.hl-log{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(5,8,26,.6)}
+.hl-log b{color:var(--hl-ink);font-weight:500}
+.hl-dots{display:flex;gap:5px}
+.hl-dots i{width:8px;height:8px;border-radius:50%;border:1px dashed #4b537e;transition:all .4s}
+.hl-dots i.on{background:var(--hl-acc);border:1px solid var(--hl-acc);box-shadow:0 0 8px rgba(140,157,240,.7)}
+.hl-toast{position:absolute;left:50%;top:22px;transform:translate(-50%,-12px);opacity:0;transition:all .5s;z-index:3;font:500 12px "JetBrains Mono",monospace;background:rgba(10,14,36,.85);border:1px solid var(--hl-acc);padding:8px 14px;border-radius:999px;pointer-events:none;margin:0;white-space:nowrap}
+.hl-toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:760px){
+  .hl{cursor:auto}
+  .hl-copy{max-width:none;right:20px;top:24px}
+  .hl h1{font-size:56px}
+  .hl-bio{font-size:16px;margin-bottom:14px}
+  .hl-bar{right:20px;justify-content:space-between}
+  .hl-mode button{padding:7px 10px;font-size:11.5px}
+}
+
+/* research photo (moved from the old hero) */
+.morphs{margin-top:36px;margin-bottom:0;max-width:640px;background:var(--paper);border:1px solid var(--line);padding:10px}
+.morphs img{width:100%;aspect-ratio:2.1/1;object-fit:cover}
+.morphs figcaption{display:flex;justify-content:space-between;gap:12px;padding-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.03em}
+
+/* pond */
 .pond-sec{border-bottom:1px solid var(--line);padding:0;background:linear-gradient(var(--bg),var(--bg))}
 .pond{position:relative}
 .pond canvas{display:block;width:100%;height:auto;aspect-ratio:1200/440}
@@ -274,25 +305,20 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <canvas id="ripples" aria-hidden="true"></canvas>
-  <div class="wrap">
-    <div>
-      <p class="mono">PhD Student · <a href="https://tarheels.live/ecoevodevolab/" style="color:inherit">Pfennig Lab</a> · UNC Chapel Hill</p>
-      <h1>Jonah<br><span>Kotzen</span></h1>
-      <p class="role">Evolutionary biologist from West Palm Beach, Florida. I study how organisms use developmental information to <em>anticipate</em> the conditions they will face, and how that shapes what they become.</p>
-      <div class="label" aria-label="Field label">
-        <span>Spea multiplicata</span>
-        <span>Portal, AZ</span>
-        <span>31.88°N 109.21°W</span>
-        <span>NSF GRFP Fellow</span>
-      </div>
-    </div>
-    <figure>
-      <img src="media/morphs.jpg" alt="Two spadefoot toad tadpoles side by side: a large carnivore morph with a wide head and a smaller omnivore morph.">
-      <figcaption><span>Carnivore · Omnivore · same clutch</span><span>Photo: <a href="https://tarheels.live/ecoevodevolab/" style="color:inherit">David Pfennig</a></span></figcaption>
-    </figure>
+<header class="hl" id="hl">
+  <span id="top"></span>
+  <canvas id="hl-c" role="img" aria-label="A desert road at night near Portal, Arizona. Moving the flashlight reveals a spadefoot toad, a Sonoran desert toad, a Mojave rattlesnake, a desert kingsnake, a tarantula, a poorwill and a puddle of fairy shrimp."></canvas>
+  <div class="hl-copy">
+    <p class="hl-kick"><i></i>Night drive · Portal, AZ · 11:48 pm</p>
+    <h1>Jonah<br>Kotzen</h1>
+    <p class="hl-bio">PhD student in the <a href="https://tarheels.live/ecoevodevolab/">Pfennig Lab</a> at UNC studying how <em>spadefoot tadpoles</em> become carnivores: the jaws, the shrimp, and the ponds that decide who makes it out.</p>
+    <div class="hl-btns"><a class="hl-btn solid" href="#research">Research</a><a class="hl-btn" href="#cv">CV</a></div>
   </div>
+  <div class="hl-bar">
+    <div class="hl-mode" role="group" aria-label="Lighting"><button type="button" data-m="lamp" class="on" aria-pressed="true">🔦 Flashlight</button><button type="button" data-m="truck" aria-pressed="false">🚙 Truck lights</button></div>
+    <div class="hl-log">Field log <b id="hl-count">0 / 7</b><span class="hl-dots" id="hl-dots"></span></div>
+  </div>
+  <p class="hl-toast" id="hl-toast" role="status">Full field log. Not bad for one night.</p>
 </header>
 
 <aside class="now" aria-label="What I'm working on now">
@@ -345,6 +371,10 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       <p>Spadefoot toads breed in desert rain pools that can dry within weeks. From a single clutch, siblings can develop into algae-scraping omnivores or shrimp-eating carnivores with enlarged jaw muscles, a notched beak and a short gut.</p>
       <p>I work across phenotypic plasticity, resource polyphenisms and biomechanics to ask how development reads the environment, sometimes before hatching, and how feeding performance shapes selection on the forms that result.</p>
     </div>
+    <figure class="morphs indent">
+      <img loading="lazy" src="media/morphs.jpg" alt="Two spadefoot toad tadpoles side by side: a large carnivore morph with a wide head and a smaller omnivore morph.">
+      <figcaption><span>Carnivore · Omnivore · same clutch</span><span>Photo: <a href="https://tarheels.live/ecoevodevolab/" style="color:inherit">David Pfennig</a></span></figcaption>
+    </figure>
     <div class="projects indent">
       <article class="project">
         <div class="art" style="background:#0B0F0D"><svg viewBox="0 0 220 140" role="img" aria-label="Illustration: spadefoot embryos in their eggs sensing chemical cues from a nearby fairy shrimp">
@@ -649,28 +679,9 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   </div>
 </footer>
 
+<script src="hero.js" defer></script>
 <script src="pond.js" defer></script>
 <script>
-(function(){
-  const c = document.getElementById('ripples'); if(!c) return;
-  const ctx = c.getContext('2d');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w,h,rings=[];
-  function size(){ const dpr=window.devicePixelRatio||1; w=c.clientWidth; h=c.clientHeight; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
-  function accent(){ return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2B3F9C'; }
-  function init(){ rings=[]; }
-  function drop(){ rings.push({x:Math.random()*w,y:Math.random()*h,r:0,max:60+Math.random()*90}); }
-  function draw(){
-    ctx.clearRect(0,0,w,h); ctx.strokeStyle=accent(); ctx.lineWidth=1;
-    rings.forEach(r=>{ for(let k=0;k<3;k++){ const rr=r.r-k*14; if(rr<=0) continue; ctx.globalAlpha=Math.max(0,1-r.r/r.max)*.32*(1-k*.28); ctx.beginPath(); ctx.ellipse(r.x,r.y,rr,rr*.38,0,0,Math.PI*2); ctx.stroke(); } });
-    ctx.globalAlpha=1;
-  }
-  let acc=0;
-  function tick(){ acc+=1; if(acc>28){acc=0; drop();} rings.forEach(r=>{ r.r+=0.45; }); rings=rings.filter(r=>r.r<r.max+30); draw(); requestAnimationFrame(tick); }
-  size(); init(); window.addEventListener('resize',()=>{size();draw();});
-  if(reduce){ for(let i=0;i<6;i++){ drop(); rings[i].r=rings[i].max*.4; } draw(); } else { for(let i=0;i<4;i++){ drop(); rings[i].r=Math.random()*rings[i].max; } tick(); }
-})();
-
 // Autoplay loops only while on screen (saves battery/data on phones)
 (function(){
   if(!('IntersectionObserver' in window)) return;
