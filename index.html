@@ -257,6 +257,8 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 
 /* service */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+#service .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:640px){ #service .cards{grid-template-columns:1fr} }
 .card{background:var(--paper);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:8px}
 .card h3{font-size:1.2rem;font-weight:700}
 .card p{margin:0;font-size:1rem}
@@ -301,13 +303,14 @@ nav ul a.nav-cv:hover{background:var(--accent);color:var(--bg)}
 .masonry.lens figure{background:var(--paper);border-color:var(--line)}
 
 /* videos */
-.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:640px){ .videos{grid-template-columns:1fr} }
 .vid{border:1px solid var(--line);background:var(--paper);display:flex;flex-direction:column}
 .vid.wide{grid-column:1 / -1}
 .vid .media{background:#0B0F0D;padding:8px}
 .vid video{width:100%;aspect-ratio:16/9;object-fit:cover;background:#0B0F0D}
 .vid.wide video{object-fit:contain}
-.vid.sq video{aspect-ratio:1/1}
+.vid.sq video{aspect-ratio:4/3;object-fit:cover}
 .docs{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-family:var(--mono);font-size:.78rem}
 .docs span{color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .vid .cap{padding:16px}
@@ -442,8 +445,8 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <div class="sub gap indent"><h3>Feeding, frame by frame</h3><p class="mono">High-speed video</p></div>
     <div class="videos">
       <article class="vid wide">
-        <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles scraping algae and striking at fairy shrimp"></video></div>
-        <div class="cap"><h3>Scraping and striking at 1,000 frames per second</h3><p>Tadpoles rasping algae (slowed 17×), then lunging at fairy shrimp (slowed 167×). This is the raw material for my performance measurements.</p></div>
+        <div class="media"><video src="media/feeding-highspeed.mp4" poster="media/feeding-highspeed-poster.jpg" controls muted playsinline preload="none" aria-label="High-speed footage of spadefoot tadpoles lunging at fairy shrimp and sucking them in"></video></div>
+        <div class="cap"><h3>Suction strikes at 1,000 frames per second</h3><p>Tadpoles lunging at fairy shrimp, slowed up to 167×. Watch the mouth flare open as suction pulls the shrimp in. This is the raw material for my performance measurements.</p></div>
       </article>
       <article class="vid sq">
         <div class="media"><video src="media/jaw-closeup.mp4" poster="media/jaw-closeup-poster.jpg" autoplay muted loop playsinline aria-label="Side view of a tadpole buccal pumping"></video></div>
@@ -452,10 +455,6 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
       <article class="vid sq">
         <div class="media"><video src="media/tadpole-headon.mp4" poster="media/tadpole-headon-poster.jpg" autoplay muted loop playsinline aria-label="A spadefoot tadpole swimming toward the camera in a clear tank"></video></div>
         <div class="cap"><h3>Head-on</h3><p>A spadefoot tadpole swims up to the glass in the filming tank.</p></div>
-      </article>
-      <article class="vid sq">
-        <div class="media"><video src="media/shrimp-cue.mp4" autoplay muted loop playsinline aria-label="Fairy shrimp swimming among spadefoot embryos"></video></div>
-        <div class="cap"><h3>Shrimp ahead</h3><p>Spadefoot embryos developing alongside live shrimp, the cue in my anticipatory plasticity experiments.</p></div>
       </article>
     </div>
   </div>
@@ -604,6 +603,11 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <h3><a href="https://cbc.unc.edu/">Carolina Biodiversity Collaborative</a></h3>
         <p>I run the CBC website and listserv and coordinate a campus flyer campaign that puts biodiversity facts up around UNC.</p>
       </article>
+      <article class="card">
+        <span class="tag">Outreach</span>
+        <h3><a href="https://tarheels.live/ecoevodevolab/">D. Pfennig Lab website</a></h3>
+        <p>I design and manage our lab's website, keeping our research, people and papers up to date for the public.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -613,11 +617,11 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <div class="sec-head"><p class="mono">04 / About</p><h2>How I got here</h2></div>
     <div class="route indent">
       <ol>
-        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>I have always been drawn to the overlooked and misunderstood. I cried every time Godzilla died at the end of the movie, and when I got to pick my first pet, I picked an albino corn snake. The animals most people fear turned out to be the ones most worth understanding.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding his corn snake in front of its terrarium, a Snake Crossing sign on the wall" loading="lazy"><figcaption>Me and my first snake</figcaption></figure></li>
-        <li><div><span class="mono">Boca Raton, FL</span><b>Saint Andrew's School</b><p>High school and student body president. I was sure I was headed for medicine, but the animals kept pulling me back.</p></div><figure><img src="media/hs-speech.jpg" alt="Jonah in a navy blazer and red tie speaking at a wooden lectern" loading="lazy"><figcaption>At the lectern, Saint Andrew's</figcaption></figure></li>
-        <li><div><span class="mono">Chestnut Hill, MA</span><b>Boston College</b><p>My first Ecology &amp; Evolution course flipped a switch. I double majored in biology and classics, founded the BC Classics Club, served as UGBC student body president, and graduated summa cum laude. In Chris Kenaley's lab I got my first taste of research: how jaw shape predicts feeding performance in sunfishes.</p></div><figure><img src="media/bc-portrait.jpg" alt="Jonah in a navy blazer smiling with arms crossed on a balcony in a bright atrium" loading="lazy"><figcaption>Senior year at BC</figcaption></figure></li>
-        <li><div><span class="mono">Fort Lauderdale, FL</span><b>South Florida Wildlife Center</b><p>A gap year back home caring for the animals people usually overlook: turtles, skunks, opossums, songbirds, raptors and plenty of pelicans. It taught me that biology is also patience, observation and care. I also wrote my first GRFP proposal, on how snakes "walk" their jaws over prey, which earned an honorable mention.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin at SFWC</figcaption></figure></li>
-        <li><div><span class="mono">Chapel Hill, NC</span><b>UNC · D. Pfennig Lab</b><p>Everything comes together in spadefoot toads: misunderstood animals that spend most of their lives underground, with tadpoles that can grow into jaw-heavy carnivores. I'm an NSF GRFP Fellow studying how they anticipate the ponds they'll grow up in, with summers of midnight road cruising near Portal, AZ.</p></div><figure><img src="media/night-snake.jpg" alt="Jonah at night in a headlamp and backwards cap, holding a patterned snake and grinning" loading="lazy"><figcaption>Road cruising, Portal, AZ</figcaption></figure></li>
+        <li><div><span class="mono">West Palm Beach, FL</span><b>Where it started</b><p>I have always been drawn to the overlooked and misunderstood. I cried when Godzilla died at the end of the movie, and when I got to pick my first pet, I picked an albino corn snake. The animals most people fear turned out to be the ones I most wanted to understand.</p></div><figure><img src="media/kid-snake.jpg" alt="Young Jonah in a blue shirt grinning and holding his corn snake in front of its terrarium, a Snake Crossing sign on the wall" loading="lazy"><figcaption>Me and my first snake</figcaption></figure></li>
+        <li><div><span class="mono">Boca Raton, FL</span><b>Almost a doctor</b><p>By high school at Saint Andrew's, I had decided animals were a hobby and medicine was the career. I spent summers in clinics and labs, sure I would become a doctor, but something always felt missing.</p></div><figure><img src="media/hs-speech.jpg" alt="Jonah in a navy blazer and red tie speaking at a wooden lectern" loading="lazy"><figcaption>At the lectern, Saint Andrew's</figcaption></figure></li>
+        <li><div><span class="mono">Chestnut Hill, MA</span><b>Back to animals</b><p>At Boston College, my first ecology and evolution course flipped a switch. Evolution explained the animals I had loved since I was a kid, and I let medicine go. In Chris Kenaley's lab I got my first taste of research: how jaw shape predicts the way sunfishes feed.</p></div><figure><img src="media/bc-portrait.jpg" alt="Jonah in a navy blazer smiling with arms crossed on a balcony in a bright atrium" loading="lazy"><figcaption>Senior year at BC</figcaption></figure></li>
+        <li><div><span class="mono">Fort Lauderdale, FL</span><b>Hands-on</b><p>After college I went home to the animals themselves, caring for turtles, skunks, opossums, songbirds, raptors and plenty of pelicans at the South Florida Wildlife Center. Rehab taught me patience and close watching, and made me certain I wanted to spend my life studying animals.</p></div><figure><img src="media/sfwc-corwin.jpg" alt="Jonah with Jeff Corwin at the South Florida Wildlife Center" loading="lazy"><figcaption>With Jeff Corwin at SFWC</figcaption></figure></li>
+        <li><div><span class="mono">Chapel Hill, NC</span><b>Spadefoots</b><p>Now it all comes together in spadefoot toads: misunderstood animals that spend most of their lives underground, with tadpoles that can grow into jaw-heavy carnivores. Summers mean midnight road cruising near Portal, AZ.</p></div><figure><img src="media/night-snake.jpg" alt="Jonah at night in a headlamp and backwards cap, holding a patterned snake and grinning" loading="lazy"><figcaption>Road cruising, Portal, AZ</figcaption></figure></li>
       </ol>
     </div>
     <div class="sub gap indent" id="interests"><h3>Off the clock</h3><p class="mono">Interests</p></div>
