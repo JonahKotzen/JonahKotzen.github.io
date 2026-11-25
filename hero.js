@@ -154,11 +154,11 @@ function setMode(m){lightsOn=m==='truck';hero.classList.toggle('truck',lightsOn)
 hero.querySelectorAll('.hl-mode button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
 
 let toastAt=null;
-function placeToast(){ // desktop: the banner pops up just above the poorwill's head
+function placeToast(){ // desktop: the banner pops up over the poorwill, lifted just into the night sky
   if(mobile){toast.style.left=toast.style.top='';toastAt=null;return}
   const pw=animals.find(x=>x.id==='poor');if(!pw||!pw.p){toastAt=null;return}
   const z=pw.p.s*(pw.size||1),headTop=pw.p.y-16*z,h=toast.offsetHeight||64;
-  const top=Math.max(hy-h-6,headTop-h-14),left=Math.max(200,Math.min(W-200,pw.p.x));
+  const top=Math.max(hy-h-40,headTop-h-95),left=Math.max(200,Math.min(W-200,pw.p.x));
   toast.style.left=left+'px';toast.style.top=top+'px';toastAt={x:left,y:top+h/2};
 }
 function found(a,t,quiet){if(a.found)return;a.found=true;a.at=quiet?-99:t;a.chip.classList.add('on');a.chip.setAttribute('aria-label',a.name+' (found)');const n=animals.filter(x=>x.found).length;count.textContent=`${n} / ${animals.length}`;if(n===animals.length&&!doneToast&&!quiet){doneToast=true;placeToast();toast.classList.add('on');burst=t;setTimeout(()=>toast.classList.remove('on'),4800)}}
