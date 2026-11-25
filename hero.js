@@ -153,7 +153,15 @@ hero.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')lastMove=-1e
 function setMode(m){lightsOn=m==='truck';hero.classList.toggle('truck',lightsOn);hero.querySelectorAll('.hl-mode button').forEach(b=>{b.classList.toggle('on',b.dataset.m===m);b.setAttribute('aria-pressed',b.dataset.m===m)});if(lightsOn)animals.forEach(a=>found(a,(performance.now()-t0)/1000,true));if(reduce)draw((performance.now()-t0)/1000,0)}
 hero.querySelectorAll('.hl-mode button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
 
-function found(a,t,quiet){if(a.found)return;a.found=true;a.at=quiet?-99:t;a.chip.classList.add('on');a.chip.setAttribute('aria-label',a.name+' (found)');const n=animals.filter(x=>x.found).length;count.textContent=`${n} / ${animals.length}`;if(n===animals.length&&!doneToast&&!quiet){doneToast=true;toast.classList.add('on');burst=t;setTimeout(()=>toast.classList.remove('on'),4800)}}
+let toastAt=null;
+function placeToast(){ // desktop: the banner pops up just above the poorwill's head
+  if(mobile){toast.style.left=toast.style.top='';toastAt=null;return}
+  const pw=animals.find(x=>x.id==='poor');if(!pw||!pw.p){toastAt=null;return}
+  const z=pw.p.s*(pw.size||1),headTop=pw.p.y-16*z,h=toast.offsetHeight||64;
+  const top=Math.max(hy-h-6,headTop-h-14),left=Math.max(200,Math.min(W-200,pw.p.x));
+  toast.style.left=left+'px';toast.style.top=top+'px';toastAt={x:left,y:top+h/2};
+}
+function found(a,t,quiet){if(a.found)return;a.found=true;a.at=quiet?-99:t;a.chip.classList.add('on');a.chip.setAttribute('aria-label',a.name+' (found)');const n=animals.filter(x=>x.found).length;count.textContent=`${n} / ${animals.length}`;if(n===animals.length&&!doneToast&&!quiet){doneToast=true;placeToast();toast.classList.add('on');burst=t;setTimeout(()=>toast.classList.remove('on'),4800)}}
 
 function pos(a,t){let lat=a.move?a.move(t):a.lat;if(!mobile)return P(lat,a.d);lat*=.78;const q=P(lat,a.d);const bot=H-24;q.y=hy+a.d*(bot-hy);q.x=Math.max(46,Math.min(W-46,q.x));q.s*=1.3;return q}
 
@@ -210,7 +218,7 @@ function draw(t,dt){
   // cursor ring
   if(!touchy&&!idle&&!lightsOn)flashlight(beam.x,beam.y);
   // achievement sparkle burst
-  const bt=t-burst;if(bt>=0&&bt<2.4){const ox=W/2,oy=mobile?H-60:56;for(let i=0;i<46;i++){const ang=R(i+700)*TAU,sp=120+R(i+800)*260,x=ox+Math.cos(ang)*sp*bt,y=oy+Math.sin(ang)*sp*bt+160*bt*bt;ctx.globalAlpha=Math.max(0,1-bt/2.4);ctx.fillStyle=i%3?'#E0B53C':(i%2?'#8C9DF0':'#fff');const z=2+R(i+900)*2.5;ctx.save();ctx.translate(x,y);ctx.rotate(bt*6+i);ctx.fillRect(-z,-z/2,z*2,z);ctx.restore()}ctx.globalAlpha=1}
+  const bt=t-burst;if(bt>=0&&bt<2.4){const ox=toastAt?toastAt.x:W/2,oy=toastAt?toastAt.y:(mobile?H-60:56);for(let i=0;i<46;i++){const ang=R(i+700)*TAU,sp=120+R(i+800)*260,x=ox+Math.cos(ang)*sp*bt,y=oy+Math.sin(ang)*sp*bt+160*bt*bt;ctx.globalAlpha=Math.max(0,1-bt/2.4);ctx.fillStyle=i%3?'#E0B53C':(i%2?'#8C9DF0':'#fff');const z=2+R(i+900)*2.5;ctx.save();ctx.translate(x,y);ctx.rotate(bt*6+i);ctx.fillRect(-z,-z/2,z*2,z);ctx.restore()}ctx.globalAlpha=1}
 }
 
 function label(a,p,al,t){
