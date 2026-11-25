@@ -388,10 +388,11 @@
   }
 
   /* ---------- loop + controls ---------- */
+  const BASE = 2;   // the story plays at 2× its scripted clock by default; fast-forward multiplies on top of this
   let last = 0, raf = 0, acc = 0; const FIX = 1 / 120;
   function frame(now) {
     raf = 0; const dt = Math.min(0.1, (now - (last || now)) / 1000); last = now;
-    if (!paused) { acc += dt * speed; let n = 0; while (acc >= FIX && n++ < 40) { step(FIX); acc -= FIX; } }   // fixed 120 Hz story ticks
+    if (!paused) { acc += dt * speed * BASE; let n = 0; while (acc >= FIX && n++ < 40) { step(FIX); acc -= FIX; } }   // fixed 120 Hz story ticks
     draw(); if (running) raf = requestAnimationFrame(frame);
   }
   function start() { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
