@@ -40,13 +40,15 @@
              [33, 'Tadpoles that eat shrimp turn carnivore; tadpoles that graze algae turn omnivore.']],
     dry: [[46, 'No more rain. The pond dries fast.'],
           [48.5, 'Carnivores develop faster: legs, then out onto the shore as the tail is reabsorbed.'],
-          [52, 'The slower omnivores are still tadpoles, and they get stranded as the water disappears.'],
-          [63, 'The pond is gone. Only the carnivores made it out.'],
+          [53, 'The slower omnivores are still tadpoles, crowding into the last of the water.'],
+          [60.5, 'The last water disappears, and the omnivores are stranded.'],
+          [65, 'The pond is gone. Only the carnivores made it out.'],
           [69, 'Fast-drying ponds favor carnivores.']],
     wet: [[40, 'This pond had few shrimp, and they are gone as the water shrinks.'],
           [46, 'A second storm floods the pond even higher.'],
-          [50, 'With no shrimp left, the carnivores starve. The omnivores keep grazing.'],
-          [61, 'In a long-lasting pond, the omnivores develop and walk out.'],
+          [50, 'With no shrimp left, the carnivores slowly waste away. The omnivores keep grazing.'],
+          [57, 'The starving carnivores die in the water while the omnivores grow legs.'],
+          [62, 'In a long-lasting pond, the omnivores develop and walk out.'],
           [71, 'Long-lasting ponds favor omnivores.']]
   };
   const ENDT = { dry: 74, wet: 76 };
@@ -138,10 +140,13 @@
   function slot(t, list) { // every swimming tadpole gets its own evenly spaced x across the water that's left
     const n = list.length, idx = list.indexOf(t);
     const q = (sd) => tads.filter(o => o.side === sd && (o.state === 'meta' || o.state === 'emerge')).length; // leave room for metamorphs queuing at each shore
-    const xl = Math.max(edge(-1) + 70 + 52 * q(-1), 360), xr = Math.min(edge(1) - 70 - 52 * q(1), 840), x = n ? lerp(xl, Math.max(xl, xr), (idx + 0.5) / n) : 600;
-    const y = t.role === 'carn' ? lerp(wl + 26, floor(x) - 30, 0.3) : floor(x) - 20;
-    return { x, y: Math.max(wl + 18, y) };
+    let xl = Math.max(edge(-1) + 70 + 52 * q(-1), 360), xr = Math.min(edge(1) - 70 - 52 * q(1), 840);
+    if (xr - xl < 38 * n) { xl = Math.min(575, edge(-1) + 14); xr = Math.max(625, edge(1) - 14); }   // shrinking puddle: crowd in, slightly staggered
+    const x = n ? lerp(xl, Math.max(xl, xr), (idx + 0.5) / n) : 600;
+    const y = t.role === 'carn' ? lerp(wl + 26, floor(x) - 30, 0.3) : floor(x) - 20 - (idx % 2) * 8;
+    return { x, y: Math.min(Math.max(wl + 10, y), floor(x) - 6) };
   }
+  const starveOf = (t) => { if (scen !== 'wet' || t.role !== 'carn') return 0; const r = t.i < 4 ? Math.floor(t.i / 2) : 3 - Math.floor(t.i / 2); return win(T, 47 + r * 1.2, 59 + r * 1.6); };
   const size = (t) => (8 + 12 * win(T, 29, 44)) * (0.85 + 0.35 * t.c);
   const mouth = (t) => { const s = size(t); return { x: t.x + Math.sign(t.fs) * s, y: t.y + s * lerp(0.45, 0.22, t.c) }; };
 
@@ -150,15 +155,15 @@
     if (t.state === 'egg') { if (T > 29 + t.i * 0.25) { const e = eggs[t.i * 6]; t.state = 'swim'; t.x = e.x; t.y = floor(e.x) - e.dy; } else return; }
     t.c = t.role === 'carn' ? lerp(0.45, 1, win(T, 33, 44)) : lerp(0.45, 0.05, win(T, 33, 44));
     const rank = t.i < 4 ? Math.floor(t.i / 2) : 3 - Math.floor(t.i / 2), o = rank * (t.role === 'carn' ? 2.2 : 3); // animals nearest the shore go first // each animal on its own schedule
-    t.dev = dry ? (t.role === 'carn' ? win(T, 40 + o, 50 + o) : 0.5 * win(T, 41, 64)) : (t.role === 'carn' ? 0.4 * win(T, 41, 51) : win(T, 48 + o, 59 + o));
-    const starve = !dry && t.role === 'carn' ? win(T, 50, 56) : 0;
+    t.dev = dry ? (t.role === 'carn' ? win(T, 38 + o * 0.9, 47 + o * 0.9) : 0.5 * win(T, 41, 64)) : (t.role === 'carn' ? 0.4 * win(T, 41, 51) : win(T, 48 + o, 59 + o));
+    const starve = starveOf(t);
     const px = t.x, py = t.y;
     if (t.state === 'swim') {
       const sl = slot(t, row), gap = (edge(1) - edge(-1) - 110) / Math.max(1, row.length), sweep = Math.min(16, gap * 0.15) * (1 - starve);
       let tx = sl.x + Math.sin(clock * 0.55 + t.ph) * sweep, ty = sl.y + Math.sin(clock * 1.1 + t.ph) * 3;
-      if (starve) ty = lerp(ty, floor(tx) - 70, starve); // weakening carnivores sag; they sink the rest of the way once dead
-      const nx = damp(t.x, tx, 1.6, dt), ny = damp(t.y, ty, 1.6, dt), vx = nx - t.x;
-      if (Math.abs(vx) > 0.04 * 60 * dt) t.face = vx > 0 ? 1 : -1;
+      if (starve) { tx = lerp(tx, 600 + (tx - 600) * 0.85, starve); ty = lerp(ty, wl + 20, starve); } // weak, starving carnivores drift listlessly near the surface; they sink once dead // weakening carnivores sag; they sink the rest of the way once dead
+      const sp = 1.6 * (1 - 0.7 * starve), nx = damp(t.x, tx, sp, dt), ny = damp(t.y, ty, sp, dt), vx = nx - t.x;
+      if (starve < 0.15 && Math.abs(vx) > 0.04 * 60 * dt) t.face = vx > 0 ? 1 : -1;   // weak starving carnivores stop turning around
       t.gape = 0;
       if (t.role === 'carn') shrimp.forEach(sh => { if (sh.by === t && sh.alive && T > sh.eatAt - 1.4) { t.face = sh.x > t.x ? 1 : -1; t.gape = Math.max(t.gape, win(T, sh.eatAt - 1.4, sh.eatAt - 0.3)); } });
       if (t.role === 'omni' && T > 33) { t.gape = 0.5 + 0.5 * Math.sin(clock * 26 + t.ph); if (R(clock * 31 + t.i) < dt * 3) bits.push({ x: t.x + Math.sign(t.fs) * s * 0.9, y: t.y + s * 0.6, t: 0 }); }
@@ -167,20 +172,20 @@
       t.x = nx; t.y = ny;
       if (starve >= 1) { t.state = 'dead'; t.dead = 0; }
       else if (t.dev > 0.9) { t.state = 'meta'; t.m = 0; t.mx = t.x; t.my = t.y; t.ord = tads.filter(o => o !== t && o.side === t.side && (o.state === 'meta' || o.state === 'emerge')).length; }
-      else if (dry && t.role === 'omni' && (wl > 395 || (room() < 56 * row.filter(o => o.role === 'omni').length))) { t.state = 'dead'; t.dead = 0; }
+      else if (dry && t.role === 'omni' && wl > 391 + 2 * (t.i % 4)) { t.state = 'dead'; t.dead = 0; }
     } else if (t.state === 'meta') {      // eased swim to its own waiting spot in the shallows (queued by arrival)
-      t.m = Math.min(1, t.m + dt / 4);
+      t.m = Math.min(1, t.m + dt / 3);
       const tx = edge(t.side) - t.side * (18 + 52 * t.ord), ty = wl + 9;
       const up = ease(Math.min(1, t.m / 0.35)), along = ease(clamp((t.m - 0.25) / 0.75, 0, 1)); // rise to the surface, then travel along it
       if (t.role === 'omni') { t.x = lerp(t.mx, tx, ease(t.m)); t.y = Math.max(ty, Math.min(lerp(t.my, ty, ease(t.m)), floor(t.x) - 50)); } // swim low over the bottom toward shore
       else { t.x = lerp(t.mx, tx, along); t.y = lerp(t.my, ty, up); }
       t.face = t.side; t.fs = damp(t.fs, t.side, 5, dt); t.pitch = damp(t.pitch, 0, 4, dt);
-      const busy = tads.some(o => o !== t && o.side === t.side && o.state === 'emerge');
+      const busy = tads.some(o => o !== t && o.side === t.side && o.state === 'emerge' && o.k < 0.55);
       if (t.m >= 1 && !busy && !tads.some(o => o !== t && o.side === t.side && o.state === 'meta' && o.ord < t.ord)) {
-        t.state = 'emerge'; t.k = 0; t.x0 = t.x; t.y0 = t.y; t.spot = edge(t.side) + t.side * 34;
+        t.state = 'emerge'; t.k = 0; t.x0 = t.x; t.y0 = t.y; t.spot = edge(t.side) + t.side * 30;
       }
     } else if (t.state === 'emerge') {    // crawl out to a fixed spot on the beach while the tail shrinks
-      t.k = Math.min(1, t.k + dt / 5); const u = ease(t.k);
+      t.k = Math.min(1, t.k + dt / 4); const u = ease(t.k);
       t.x = lerp(t.x0, t.spot, u); t.y = lerp(t.y0, floor(t.x) - s * 0.6, ease(Math.min(1, t.k * 1.6)));
       if (t.k >= 1) { t.state = 'hop'; t.h = 0; t.x0 = t.x; }
     } else if (t.state === 'hop') {       // toadlet hops away over the bank
@@ -220,16 +225,40 @@
     return out;
   }
 
-  let lastStage = -1, tickFor = '';
+  /* ---------- story bar: event markers you can click, a track you can scrub, a crossfading caption ---------- */
+  let lastStage = -1, tickFor = '', seeking = false, capFlip = 0;
+  const stages = () => STAGES.common.concat(STAGES[scen]);
+  const capSpans = capEl ? [0, 1].map(() => { const sp = document.createElement('span'); capEl.appendChild(sp); return sp; }) : [];
+  function showCap(txt) {
+    if (!capSpans.length) return;
+    const cur = capSpans[capFlip], nxt = capSpans[1 - capFlip];
+    if (cur.textContent === txt && cur.classList.contains('on')) return;
+    nxt.textContent = txt; nxt.classList.add('on'); cur.classList.remove('on'); capFlip = 1 - capFlip;
+  }
   function ticks(list) {
     const bar = $('.pond-progress'); if (!bar || tickFor === scen) return; tickFor = scen;
-    bar.querySelectorAll('b').forEach(b => b.remove());
-    list.forEach(([t]) => { if (!t) return; const b = document.createElement('b'); b.style.left = (100 * t / ENDT[scen]) + '%'; bar.appendChild(b); });
+    bar.querySelectorAll('.mk').forEach(b => b.remove());
+    list.forEach(([t, txt], i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mk'; b.style.left = (100 * t / ENDT[scen]) + '%';
+      b.setAttribute('aria-label', `Jump to step ${i + 1}: ${txt}`); b.title = txt; b.dataset.i = i;
+      b.addEventListener('click', (e) => { e.stopPropagation(); seek(t + 0.05); }); bar.appendChild(b); });
   }
   function caption() {
-    const list = STAGES.common.concat(STAGES[scen]); let idx = 0; list.forEach((s, i) => { if (T >= s[0]) idx = i; });
+    const list = stages(); let idx = 0; list.forEach((s, i) => { if (T >= s[0]) idx = i; });
+    if (seeking) return;
     if (barEl) barEl.style.width = (100 * clamp(T / ENDT[scen], 0, 1)).toFixed(2) + '%';
-    if (idx !== lastStage) { lastStage = idx; if (capEl) { const txt = list[idx][1]; capEl.style.opacity = 0; clearTimeout(caption.t); caption.t = setTimeout(() => { capEl.textContent = txt; capEl.style.opacity = 1; }, 220); } ticks(list); if (stepEl) stepEl.textContent = `${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`; }
+    if (idx !== lastStage) {
+      lastStage = idx; ticks(list); showCap(list[idx][1]);
+      if (stepEl) stepEl.textContent = `${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`;
+      $('.pond-progress') && $('.pond-progress').querySelectorAll('.mk').forEach(b => b.classList.toggle('past', +b.dataset.i <= idx));
+    }
+  }
+  function seek(t) {
+    t = clamp(t, 0, ENDT[scen] - 0.05);
+    const keepAlt = autoAlt; autoAlt = false; seeking = true;
+    if (t < T) reset();
+    while (T < t) step(1 / 60);
+    seeking = false; autoAlt = keepAlt; caption(); draw();
+    userStarted = true; sync();
   }
 
   /* ---------- drawing ---------- */
@@ -284,7 +313,7 @@
   function drawTad(t) {
     if (t.fade <= 0) return;
     if (t.state === 'emerge' || t.state === 'hop') return drawFroglet(t);
-    const s = size(t), c = t.c, dead = t.state === 'dead', starve = scen === 'wet' && t.role === 'carn' ? win(T, 50, 56) : 0;
+    const s = size(t), c = t.c, dead = t.state === 'dead', starve = starveOf(t);
     ctx.save(); ctx.globalAlpha = t.fade; ctx.translate(t.x, t.y);
     ctx.scale(Math.abs(t.fs) < 0.15 ? Math.sign(t.fs || 1) * 0.15 : t.fs, dead ? -1 : 1); ctx.rotate(t.pitch);
     const body = mix(mix('#8D8A4E', '#D9703F', c), '#A39E92', Math.max(starve * 0.8, dead ? 0.6 : 0)), line = c > 0.5 ? '#7A3A1E' : '#4C4A2A';
@@ -300,9 +329,10 @@
     ctx.strokeStyle = body; ctx.lineCap = 'round';
     if (hind > 0) { ctx.lineWidth = s * 0.16; ctx.beginPath(); ctx.moveTo(-s * 0.6, s * 0.35); ctx.lineTo(-s * (0.6 + 0.5 * hind), s * (0.35 + 0.45 * hind)); ctx.lineTo(-s * (0.3 + 0.6 * hind), s * (0.4 + 0.6 * hind)); ctx.stroke(); }
     if (fore > 0) { ctx.lineWidth = s * 0.12; ctx.beginPath(); ctx.moveTo(s * 0.35, s * 0.45); ctx.lineTo(s * (0.4 + 0.15 * fore), s * (0.45 + 0.45 * fore)); ctx.stroke(); }
-    const ry = s * lerp(0.84, 0.7, c) * (1 - 0.15 * starve);
+    const ry = s * lerp(0.84, 0.7, c) * (1 - 0.42 * starve);
     ctx.fillStyle = body; ctx.strokeStyle = line; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(0, 0, s, ry, 0, 0, TAU); ctx.fill(); ctx.stroke();
     ctx.fillStyle = 'rgba(255,240,220,0.35)'; ctx.beginPath(); ctx.ellipse(-s * 0.1, ry * 0.42, s * 0.7, ry * 0.42, 0, 0, Math.PI); ctx.fill();
+    if (starve > 0.25) { ctx.strokeStyle = `rgba(60,45,35,${0.5 * win(starve, 0.25, 0.7)})`; ctx.lineWidth = 1; for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.arc(-s * 0.1 + k * s * 0.22, ry * 0.1, ry * 0.55, 0.6, 2.5); ctx.stroke(); } }
     if (c > 0.15) { ctx.fillStyle = `rgba(160,50,30,${(0.25 + 0.4 * c) * (1 - starve * 0.7)})`; ctx.beginPath(); ctx.ellipse(s * 0.28, s * 0.12, s * (0.12 + 0.28 * c), s * (0.1 + 0.2 * c), 0.3, 0, TAU); ctx.fill(); }
     if (c < 0.6) { ctx.strokeStyle = 'rgba(60,55,30,0.45)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(-s * 0.15, s * 0.2, s * 0.24 * (1 - c), 0, 5.2); ctx.stroke(); }
     if (dead) { const r = Math.max(3.5, s * 0.24); ctx.strokeStyle = '#D22B2B'; ctx.lineWidth = Math.max(2, r * 0.5); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(s * 0.45 - r, -s * 0.3 - r); ctx.lineTo(s * 0.45 + r, -s * 0.3 + r); ctx.moveTo(s * 0.45 + r, -s * 0.3 - r); ctx.lineTo(s * 0.45 - r, -s * 0.3 + r); ctx.stroke(); }
@@ -373,6 +403,18 @@
   if (pb) pb.addEventListener('click', () => { userStarted = true; setPause(!paused); sync(); });
   if (ff) ff.addEventListener('click', () => { speed = speed === 1 ? 4 : 1; ff.setAttribute('aria-pressed', String(speed > 1)); ff.textContent = speed > 1 ? '⏩ 4× on' : '⏩ Fast-forward'; if (!running) draw(); });
 
+  const track = $('.pond-progress');
+  if (track) {
+    let drag = false, want = null, pend = false;
+    const at = (e) => { const r = track.getBoundingClientRect(); return clamp((e.clientX - r.left) / r.width, 0, 1) * ENDT[scen]; };
+    const go = () => { pend = false; if (want !== null) { seek(want); want = null; } };
+    const queue = (t) => { want = t; if (!pend) { pend = true; requestAnimationFrame(go); } };
+    track.addEventListener('pointerdown', (e) => { if (e.target.classList.contains('mk')) return; drag = true; track.classList.add('scrub'); track.setPointerCapture(e.pointerId); queue(at(e)); });
+    track.addEventListener('pointermove', (e) => { if (drag) queue(at(e)); });
+    const end = () => { drag = false; track.classList.remove('scrub'); };
+    track.addEventListener('pointerup', end); track.addEventListener('pointercancel', end);
+    track.addEventListener('keydown', (e) => { const list = stages(); if (e.key === 'ArrowRight') { const n = list.find(s => s[0] > T + 0.1); if (n) seek(n[0] + 0.05); e.preventDefault(); } if (e.key === 'ArrowLeft') { const prev = list.filter(s => s[0] < T - 0.6).pop(); seek(prev ? prev[0] + 0.05 : 0); e.preventDefault(); } });
+  }
   palette(); resize(); reset(); cam.vw = camTarget(); draw(); syncButtons(); setPause(false);
   if (ff) ff.textContent = '⏩ Fast-forward';
   if (reduce) setPause(true);

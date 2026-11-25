@@ -160,9 +160,17 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 .pond canvas{display:block;width:100%;height:auto;aspect-ratio:1200/440}
 .pond-progress{grid-column:1/-1;height:3px;background:var(--line);position:relative;overflow:hidden;flex-basis:100%}
 .pond-progress i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);transition:width .25s linear}
-.pond-progress{overflow:visible;margin-bottom:6px}
-.pond-progress b{position:absolute;top:-3px;width:1px;height:9px;background:var(--muted);opacity:.5}
-.pond-cap{transition:opacity .22s ease}
+.pond-progress{overflow:visible;margin:8px 0 10px;height:4px;border-radius:4px;cursor:pointer;touch-action:none}
+.pond-progress::before{content:"";position:absolute;left:0;right:0;top:-12px;bottom:-12px}
+.pond-progress i{border-radius:4px;transition:none}
+.pond-progress:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
+.pond-progress .mk{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;padding:0;border-radius:50%;border:2px solid var(--muted);background:var(--bg);cursor:pointer;transition:transform .2s,border-color .2s,background .2s}
+.pond-progress .mk::after{content:"";position:absolute;inset:-8px}
+.pond-progress .mk.past{border-color:var(--accent);background:var(--accent)}
+.pond-progress .mk:hover,.pond-progress .mk:focus-visible{transform:scale(1.4);border-color:var(--ink)}
+.pond-cap{display:grid}
+.pond-cap span{grid-area:1/1;opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+.pond-cap span.on{opacity:1;transform:none}
 .seg{display:inline-flex;border:1px solid var(--line);background:var(--paper)}
 .seg button{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;border:0;background:transparent;color:var(--muted);padding:7px 12px;cursor:pointer;transition:background .2s,color .2s}
 .seg button+button{border-left:1px solid var(--line)}
@@ -429,7 +437,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
     <p class="pond-toast" role="status" aria-live="polite"></p>
   </div>
   <div class="pond-bar wrap">
-    <div class="pond-progress" aria-hidden="true"><i></i></div>
+    <div class="pond-progress" tabindex="0" role="group" aria-label="Story timeline: drag to scrub, click a marker to jump, or use the arrow keys"><i></i></div>
     <p class="pond-story"><span class="pond-step mono"></span><span class="pond-cap" aria-live="polite"></span></p>
     <div class="ctrls">
       <div class="seg" role="group" aria-label="Choose an ending">
