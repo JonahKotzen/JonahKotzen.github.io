@@ -30,26 +30,26 @@
   const edge = (side) => { let x = 600; while (floor(x) > wl && Math.abs(x - 600) < 598) x += side * 2; return x; };
 
   const STAGES = {
-    common: [[0, 'Dry season: fairy shrimp eggs and spadefoot toads wait in the dry ground.'],
-             [4, 'A monsoon storm rolls in and fills the pond.'],
-             [8, 'A male spadefoot swims out and calls.'],
-             [12, 'A female swims over and picks him; he clasps her in amplexus.'],
-             [18, 'Still in the rain, she lays a big clutch of eggs on sticks and the bottom.'],
-             [23, 'Fairy shrimp hatch from the mud, and algae coats the rocks, sticks and bottom.'],
-             [29, 'The eggs hatch. Same clutch, same pond.'],
-             [33, 'Tadpoles that eat shrimp turn carnivore; tadpoles that graze algae turn omnivore.']],
-    dry: [[46, 'No more rain. The pond dries fast.'],
-          [48.5, 'Carnivores develop faster: legs, then out onto the shore as the tail is reabsorbed.'],
-          [53, 'The slower omnivores are still tadpoles, crowding into the last of the water.'],
-          [60.5, 'The last water disappears, and the omnivores are stranded.'],
-          [65, 'The pond is gone. Only the carnivores made it out.'],
-          [69, 'Fast-drying ponds favor carnivores.']],
-    wet: [[40, 'This pond had few shrimp, and they are gone as the water shrinks.'],
-          [46, 'A second storm floods the pond even higher.'],
-          [50, 'With no shrimp left, the carnivores slowly waste away. The omnivores keep grazing.'],
-          [57, 'The starving carnivores die in the water while the omnivores grow legs.'],
-          [62, 'In a long-lasting pond, the omnivores develop and walk out.'],
-          [71, 'Long-lasting ponds favor omnivores.']]
+    common: [[0, '🏜️', 'Dry season: fairy shrimp eggs and spadefoot toads wait in the dry ground.'],
+             [4, '⛈️', 'A monsoon storm rolls in and fills the pond.'],
+             [8, '🎶', 'A male spadefoot swims out and calls.'],
+             [12, '💞', 'A female swims over and picks him; he clasps her in amplexus.'],
+             [18, '🥚', 'Still in the rain, she lays a big clutch of eggs on sticks and the bottom.'],
+             [23, '🦐', 'Fairy shrimp hatch from the mud, and algae coats the rocks, sticks and bottom.'],
+             [29, '🐣', 'The eggs hatch. Same clutch, same pond.'],
+             [33, '🔀', 'Tadpoles that eat shrimp turn carnivore; tadpoles that graze algae turn omnivore.']],
+    dry: [[46, '☀️', 'No more rain. The pond dries fast.'],
+          [48.5, '🦵', 'Carnivores develop faster: legs, then out onto the shore as the tail is reabsorbed.'],
+          [53, '💧', 'The slower omnivores are still tadpoles, crowding into the last of the water.'],
+          [60.5, '💀', 'The last water disappears, and the omnivores are stranded.'],
+          [65, '🐸', 'The pond is gone. Only the carnivores made it out.'],
+          [69, '🏆', 'Fast-drying ponds favor carnivores.']],
+    wet: [[40, '📉', 'This pond had few shrimp, and they are gone as the water shrinks.'],
+          [46, '🌧️', 'A second storm floods the pond even higher.'],
+          [50, '🥀', 'With no shrimp left, the carnivores slowly waste away. The omnivores keep grazing.'],
+          [57, '💀', 'The starving carnivores die in the water while the omnivores grow legs.'],
+          [62, '🐸', 'In a long-lasting pond, the omnivores develop and walk out.'],
+          [71, '🏆', 'Long-lasting ponds favor omnivores.']]
   };
   const ENDT = { dry: 74, wet: 76 };
 
@@ -238,7 +238,8 @@
   function ticks(list) {
     const bar = $('.pond-progress'); if (!bar || tickFor === scen) return; tickFor = scen;
     bar.querySelectorAll('.mk').forEach(b => b.remove());
-    list.forEach(([t, txt], i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mk'; b.style.left = (100 * t / ENDT[scen]) + '%';
+    list.forEach(([t, ic, txt], i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mk' + (i % 2 ? ' lo' : ''); b.style.left = (100 * t / ENDT[scen]) + '%';
+      const sp = document.createElement('span'); sp.className = 'ic'; sp.textContent = ic; sp.setAttribute('aria-hidden', 'true'); b.appendChild(sp);
       b.setAttribute('aria-label', `Jump to step ${i + 1}: ${txt}`); b.title = txt; b.dataset.i = i;
       b.addEventListener('click', (e) => { e.stopPropagation(); seek(t + 0.05); }); bar.appendChild(b); });
   }
@@ -247,8 +248,8 @@
     if (seeking) return;
     if (barEl) barEl.style.width = (100 * clamp(T / ENDT[scen], 0, 1)).toFixed(2) + '%';
     if (idx !== lastStage) {
-      lastStage = idx; ticks(list); showCap(list[idx][1]);
-      if (stepEl) stepEl.textContent = `${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`;
+      lastStage = idx; ticks(list); showCap(list[idx][2]);
+      if (stepEl) stepEl.textContent = `${list[idx][1]}  ${scen === 'dry' ? 'Fast-drying pond' : 'Long-lasting pond'} · ${idx + 1}/${list.length}`;
       $('.pond-progress') && $('.pond-progress').querySelectorAll('.mk').forEach(b => b.classList.toggle('past', +b.dataset.i <= idx));
     }
   }

@@ -160,14 +160,18 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 .pond canvas{display:block;width:100%;height:auto;aspect-ratio:1200/440}
 .pond-progress{grid-column:1/-1;height:3px;background:var(--line);position:relative;overflow:hidden;flex-basis:100%}
 .pond-progress i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);transition:width .25s linear}
-.pond-progress{overflow:visible;margin:8px 0 10px;height:4px;border-radius:4px;cursor:pointer;touch-action:none}
+.pond-progress{overflow:visible;margin:40px 0 10px;height:4px;border-radius:4px;cursor:pointer;touch-action:none}
 .pond-progress::before{content:"";position:absolute;left:0;right:0;top:-12px;bottom:-12px}
 .pond-progress i{border-radius:4px;transition:none}
 .pond-progress:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
 .pond-progress .mk{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;padding:0;border-radius:50%;border:2px solid var(--muted);background:var(--bg);cursor:pointer;transition:transform .2s,border-color .2s,background .2s}
 .pond-progress .mk::after{content:"";position:absolute;inset:-8px}
 .pond-progress .mk.past{border-color:var(--accent);background:var(--accent)}
-.pond-progress .mk:hover,.pond-progress .mk:focus-visible{transform:scale(1.4);border-color:var(--ink)}
+.pond-progress .mk .ic{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:17px;line-height:1;filter:grayscale(1) opacity(.45);transition:filter .3s,transform .25s;pointer-events:none}
+.pond-progress .mk.past .ic{filter:none}
+.pond-progress .mk:hover,.pond-progress .mk:focus-visible{border-color:var(--ink)}
+.pond-progress .mk:hover .ic,.pond-progress .mk:focus-visible .ic{transform:translateX(-50%) scale(1.35)}
+@media (max-width:640px){ .pond-progress{margin:36px 0 34px} .pond-progress .mk .ic{font-size:14px} .pond-progress .mk.lo .ic{bottom:auto;top:16px} }
 .pond-cap{display:grid}
 .pond-cap span{grid-area:1/1;opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
 .pond-cap span.on{opacity:1;transform:none}
