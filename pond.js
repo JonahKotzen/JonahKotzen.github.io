@@ -200,15 +200,16 @@
 
   /* ---------- the frogs (all of the courtship happens in the water) ---------- */
   function frogs() {
-    if (T < 5.5 || T > 28) return null;
+    if (T < 4.5 || T > 28) return null;
     const S = wl + 9, out = [];
     const hopIn = (x0, x1, a, b) => { const u = win(T, a, b), x = lerp(x0, x1, u); return { x, y: Math.min(floor(x) - 12, S) - Math.abs(Math.sin(u * Math.PI * 3)) * 16 * (wet(x) ? 0 : 1) }; };
     let m, f;
     // male: hops down the left bank into the water, swims to the middle, calls
-    if (T < 8) m = hopIn(40, 420, 5.5, 8); else m = { x: lerp(420, 520, win(T, 8, 9.5)), y: S };
+    const dig = (x, a, b) => lerp(floor(x) + 30, floor(x) - 12, win(T, a, b));   // both toads dig up out of their burrows as the rain soaks in
+    if (T < 5.5) m = { x: 60, y: dig(60, 4.5, 5.5) }; else if (T < 8) m = hopIn(60, 420, 5.5, 8); else m = { x: lerp(420, 520, win(T, 8, 9.5)), y: S };
     m.d = 1; m.call = T > 9 && T < 15.5 ? 0.5 + 0.5 * Math.sin(clock * 9) : 0;
-    // female: arrives from the right while he calls
-    if (T < 11) f = { x: 2000, y: S }; else if (T < 13) f = hopIn(1160, 800, 11, 13); else f = { x: lerp(800, 545, win(T, 13, 15.5)), y: S + 2 };
+    // female: the toad buried on the right bank; she surfaces with him, then swims over while he calls
+    if (T < 11) f = { x: 1140, y: dig(1140, 4.5, 6) }; else if (T < 13) f = hopIn(1140, 800, 11, 13); else f = { x: lerp(800, 545, win(T, 13, 15.5)), y: S + 2 };   // she waits on her bank, then answers his call
     f.d = -1;
     if (T < 15.5) { out.push({ ...f, s: 24 }); out.push({ ...m, s: 18 }); return out; }
     // amplexus: he climbs on, they dive to the sticks, she lays, then they part and swim off
@@ -281,7 +282,7 @@
     // waiting underground
     const under = 1 - win(T, 23, 25);
     if (under > 0) { ctx.globalAlpha = under; ctx.fillStyle = dark ? 'rgba(230,200,160,0.5)' : 'rgba(120,80,40,0.55)'; CYSTS.forEach(c => { ctx.beginPath(); ctx.arc(c.x, floor(c.x) + c.d, 1.8, 0, TAU); ctx.fill(); }); ctx.globalAlpha = 1; }
-    const bur = 1 - win(T, 4.5, 6);
+    const bur = T < 4.5 ? 1 : 0;
     if (bur > 0) { ctx.globalAlpha = bur; [[60, 18, 1], [1140, 24, -1]].forEach(([x, s, d]) => { const y = floor(x) + 30; ctx.fillStyle = dark ? 'rgba(0,0,0,0.3)' : 'rgba(90,60,30,0.3)'; ctx.beginPath(); ctx.ellipse(x, y - 4, s * 1.5, s * 0.9, 0, 0, TAU); ctx.fill(); toad(x, y, s, d, 0); }); ctx.globalAlpha = 1; }
     // rocks, sticks, algae
     const algae = T < 23 ? 0 : scen === 'dry' ? clamp(win(T, 23, 31) - 0.6 * win(T, 52, 64), 0, 1) : win(T, 23, 31);
