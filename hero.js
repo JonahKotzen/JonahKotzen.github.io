@@ -159,7 +159,7 @@ function poorwill(g,t){
 }
 
 // ---------- state ----------
-let burst=-99,shoot=null,beam={x:0,y:0,tx:0,ty:0},last=performance.now(),t0=last,lastMove=-1e9,lightsOn=false,touchy=matchMedia('(hover: none)').matches,dragging=false,doneToast=false;
+let armed=false,armK=0,burst=-99,shoot=null,beam={x:0,y:0,tx:0,ty:0},last=performance.now(),t0=last,lastMove=-1e9,lightsOn=false,touchy=matchMedia('(hover: none)').matches,dragging=false,doneToast=false;
 const toast=document.getElementById('hl-toast');
 function aimAt(e){const r=hero.getBoundingClientRect();beam.tx=e.clientX-r.left;beam.ty=e.clientY-r.top;lastMove=performance.now()}
 hero.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||dragging)aimAt(e)});
@@ -183,6 +183,7 @@ function pos(a,t){let lat=a.move?a.move(t):a.lat;if(!mobile)return P(lat,a.d);la
 
 function draw(t,dt){
   if(!W||!H)return;
+  armK+=((armed?1:0)-armK)*(1-Math.exp(-dt*5));
   const now=performance.now();
   // beam target: pointer, or auto-sweep when idle / on touch
   const idle=now-lastMove>3500;
@@ -207,18 +208,18 @@ function draw(t,dt){
   if(lightsOn){const g=ctx.createRadialGradient(vx,H*1.15,0,vx,H*1.15,H*.9);g.addColorStop(0,'rgba(255,235,190,.16)');g.addColorStop(1,'rgba(255,235,190,0)');ctx.fillStyle=g;ctx.fillRect(0,hy,W,H-hy)}
 
   // 3. headlamp beam
-  if(!lightsOn){
+  if(!lightsOn&&armK>.01){
     mx.globalCompositeOperation='source-over';mx.clearRect(0,0,W,H);mx.drawImage(scn,0,0,W,H);
     mx.globalCompositeOperation='destination-in';
     const g=mx.createRadialGradient(beam.x,beam.y,0,beam.x,beam.y,BR);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.55,'rgba(0,0,0,.85)');g.addColorStop(1,'rgba(0,0,0,0)');mx.fillStyle=g;mx.fillRect(0,0,W,H);
     mx.globalCompositeOperation='source-over';
-    ctx.drawImage(bm,0,0,W,H);
+    ctx.globalAlpha=armK;ctx.drawImage(bm,0,0,W,H);ctx.globalAlpha=1;
     const h=ctx.createRadialGradient(beam.x,beam.y,0,beam.x,beam.y,BR*1.5);h.addColorStop(0,'rgba(255,236,200,.10)');h.addColorStop(1,'rgba(255,236,200,0)');ctx.fillStyle=h;ctx.fillRect(0,0,W,H);
   }
 
   // 4. eyeshine glints in the dark + discovery
   for(const a of animals){const p=a.p,d=Math.hypot(p.x-beam.x,p.y-beam.y);
-    if(!lightsOn&&!reduce){if(d<BR*.55){a.dwell+=dt;if(a.dwell>.35)found(a,t)}else a.dwell=Math.max(0,a.dwell-dt)}
+    if(!lightsOn&&!reduce&&armed){if(d<BR*.55){a.dwell+=dt;if(a.dwell>.35)found(a,t)}else a.dwell=Math.max(0,a.dwell-dt)}
     const lit=lightsOn||d<BR*.8;
     if(!lit){const near=Math.max(0,1-d/(W*.6));const tw=a.strong?.9:(.25+.75*Math.max(0,Math.sin(t*1.3+a.d*20))**6);const al=Math.min(1,tw*(.35+near));
       for(const[ex,ey]of a.eyes){const dir=a.id==='bufo'?-1:1;const z=p.s*(a.size||1);const x=p.x+ex*z*dir,y=p.y+ey*z;const r=(a.strong?3.2:2)*Math.max(.7,p.s);
@@ -229,10 +230,10 @@ function draw(t,dt){
   let best=null,bd=1e9;for(const a of animals){if(!a.found)continue;const d=Math.hypot(a.p.x-beam.x,a.p.y-beam.y);if(d<bd){bd=d;best=a}}
   const used=[];
   for(const a of animals){if(!a.found||(a===best&&bd<BR*1.2&&!lightsOn))continue;const fresh=t-a.at<3.5;if(lightsOn||fresh)tag(a,a.p,lightsOn?1:Math.min(1,3.5-(t-a.at)),used)}
-  if(best&&bd<BR*1.2&&!lightsOn){label(best,best.p,Math.max(0,Math.min(1,(BR*1.2-bd)/(BR*.4))),t)}
+  if(best&&bd<BR*1.2&&!lightsOn&&armed){label(best,best.p,Math.max(0,Math.min(1,(BR*1.2-bd)/(BR*.4))),t)}
 
   // cursor ring
-  if(!touchy&&!idle&&!lightsOn)flashlight(beam.x,beam.y);
+  if(!touchy&&!idle&&!lightsOn&&armed)flashlight(beam.x,beam.y);
   // achievement sparkle burst
   const bt=t-burst;if(bt>=0&&bt<2.4){const ox=toastAt?toastAt.x:W/2,oy=toastAt?toastAt.y:(mobile?H-60:56);for(let i=0;i<46;i++){const ang=R(i+700)*TAU,sp=120+R(i+800)*260,x=ox+Math.cos(ang)*sp*bt,y=oy+Math.sin(ang)*sp*bt+160*bt*bt;ctx.globalAlpha=Math.max(0,1-bt/2.4);ctx.fillStyle=i%3?'#E0B53C':(i%2?'#8C9DF0':'#fff');const z=2+R(i+900)*2.5;ctx.save();ctx.translate(x,y);ctx.rotate(bt*6+i);ctx.fillRect(-z,-z/2,z*2,z);ctx.restore()}ctx.globalAlpha=1}
 }
@@ -277,7 +278,10 @@ function flashlight(x,y){
 function wrap(s,w){const out=[];let cur='';for(const word of s.split(' ')){const tr=cur?cur+' '+word:word;if(ctx.measureText(tr).width>w&&cur){out.push(cur);cur=word}else cur=tr}if(cur)out.push(cur);return out}
 function fit(s,w){if(ctx.measureText(s).width<=w)return s;while(s.length&&ctx.measureText(s+'…').width>w)s=s.slice(0,-1);return s+'…'}
 
-function resetLog(){if(reduce)return;animals.forEach(a=>{a.found=false;a.dwell=0;a.at=-99;a.chip.classList.remove('on');a.chip.setAttribute('aria-label',a.name+' (not found yet)')});count.textContent=`0 / ${animals.length}`;doneToast=false;toast.classList.remove('on');if(lightsOn)setMode('lamp')}
+function resetLog(){if(reduce)return;disarm();animals.forEach(a=>{a.found=false;a.dwell=0;a.at=-99;a.chip.classList.remove('on');a.chip.setAttribute('aria-label',a.name+' (not found yet)')});count.textContent=`0 / ${animals.length}`;doneToast=false;toast.classList.remove('on');if(lightsOn)setMode('lamp')}
+function arm(e){armed=true;hero.classList.add('armed');startBtn&&startBtn.classList.add('gone');if(e&&e.clientX!==undefined&&e.pointerType!=='touch'&&e.detail){aimAt(e);beam.x=beam.tx;beam.y=beam.ty}}
+function disarm(){armed=false;hero.classList.remove('armed');startBtn&&startBtn.classList.remove('gone')}
+const startBtn=hero.querySelector('.hl-start');if(startBtn)startBtn.addEventListener('click',e=>{e.stopPropagation();arm(e)});
 let visible=true;new IntersectionObserver(es=>{const v=es[0].isIntersecting;if(visible&&!v)resetLog();visible=v}).observe(hero);
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(visible&&!document.hidden)draw((now-t0)/1000,dt);requestAnimationFrame(loop)}
 addEventListener('resize',()=>{resize();if(reduce)draw(0,0)});

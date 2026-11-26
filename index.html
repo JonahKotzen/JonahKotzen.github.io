@@ -107,9 +107,19 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 .hero figcaption{display:flex;justify-content:space-between;gap:12px;padding-top:8px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.03em}
 
 /* night-drive hero */
-.hl{--hl-ink:#EDEFF7;--hl-mute:#9AA3C7;--hl-acc:#8C9DF0;--hl-acc2:#2B3F9C;position:relative;height:min(calc(100svh - 56px),780px);min-height:560px;overflow:hidden;cursor:none;touch-action:pan-y;background:#05081a;color:var(--hl-ink);border-bottom:1px solid #1c2350}
+.hl{--hl-ink:#EDEFF7;--hl-mute:#9AA3C7;--hl-acc:#8C9DF0;--hl-acc2:#2B3F9C;position:relative;height:min(calc(100svh - 56px),780px);min-height:560px;overflow:hidden;cursor:auto;touch-action:pan-y;background:#05081a;color:var(--hl-ink);border-bottom:1px solid #1c2350}
 .hl canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hl.armed{cursor:none}
 .hl.truck{cursor:auto}
+.hl-start{position:absolute;z-index:3;right:clamp(24px,7vw,110px);top:24%;display:flex;align-items:center;gap:14px;text-align:left;padding:14px 20px 14px 16px;border-radius:16px;border:1px solid rgba(255,214,140,.55);background:rgba(12,16,42,.72);color:var(--hl-ink);cursor:pointer;backdrop-filter:blur(3px);box-shadow:0 0 0 0 rgba(255,214,140,.5);animation:hl-pulse 2.4s ease-out infinite;transition:opacity .5s,transform .5s}
+.hl-start .bulb{font-size:28px;line-height:1;filter:drop-shadow(0 0 10px rgba(255,220,150,.9))}
+.hl-start b{display:block;font:800 18px "Bricolage Grotesque",sans-serif;letter-spacing:-.01em}
+.hl-start small{display:block;font:500 11px "JetBrains Mono",monospace;color:var(--hl-mute);margin-top:4px;letter-spacing:.02em}
+.hl-start:hover{border-color:#ffd68c;transform:translateY(-2px)}
+.hl-start:focus-visible{outline:2px solid var(--hl-acc);outline-offset:4px}
+.hl-start.gone{opacity:0;transform:scale(.9);pointer-events:none;animation:none}
+@keyframes hl-pulse{0%{box-shadow:0 0 0 0 rgba(255,214,140,.45)}70%{box-shadow:0 0 0 18px rgba(255,214,140,0)}100%{box-shadow:0 0 0 0 rgba(255,214,140,0)}}
+@media (prefers-reduced-motion:reduce){.hl-start{display:none}}
 .hl-copy{position:absolute;left:clamp(20px,5vw,72px);top:clamp(28px,8vh,88px);max-width:min(460px,40vw);pointer-events:none;z-index:2}
 .hl-kick{font:500 11px/1.4 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--hl-acc);display:flex;gap:10px;align-items:center;margin:0}
 .hl-kick i{width:7px;height:7px;border-radius:50%;background:#ffb347;box-shadow:0 0 10px #ffb347;animation:hl-blink 2.4s infinite}
@@ -142,6 +152,10 @@ header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line
 @media (max-width:760px){ .hl-toast{top:auto;bottom:22px;padding:10px 16px 10px 12px} .hl-toast b{font-size:15px} }
 @media (max-width:760px){
   .hl{cursor:auto}
+  .hl-start{right:auto;left:50%;top:auto;bottom:22px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);padding:12px 16px 12px 12px}
+  .hl-start:hover{transform:translateX(-50%)}
+  .hl-start.gone{transform:translateX(-50%) scale(.9)}
+  .hl-start b{font-size:16px}
   .hl-copy{max-width:none;right:20px;top:24px}
   .hl h1{font-size:56px}
   .hl-bio{font-size:16px;margin-bottom:14px}
@@ -397,6 +411,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   <div class="hl-bar">
     <div class="hl-log"><span class="lbl">Field log</span> <b id="hl-count">0 / 8</b><span class="hl-dots" id="hl-dots"></span></div>
   </div>
+  <button type="button" class="hl-start" id="hl-start"><span class="bulb" aria-hidden="true">🔦</span><span><b>Switch on your flashlight</b><small>8 critters are hiding on the road. Can you find them all?</small></span></button>
   <div class="hl-toast" id="hl-toast" role="status" aria-live="polite"><span class="tro" aria-hidden="true">🏆</span><span><small>Achievement unlocked</small><b>All desert critters discovered!</b></span></div>
 </header>
 
