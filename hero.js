@@ -14,13 +14,14 @@ const TAU=Math.PI*2;
 function P(lat,d){const y=hy+d*(H-hy);const hw=d*W*hwk;let x=vx+lat*hw;if(mobile)x=Math.max(40,Math.min(W-40,x));return{x,y,s:(0.25+d*0.9)*Math.min(W,H*1.4)/780}}
 
 const animals=[
- {id:'spade',name:'Mexican spadefoot',sci:'Spea multiplicata',note:'Out after the first monsoon storm. Its tadpoles might turn carnivore.',lat:-.32,d:.8,eyes:[[24,-12]],eye:'#ffd27a',draw:spadefoot},
+ {id:'spade',name:'Mexican spadefoot',sci:'Spea multiplicata',note:'Spends most of the year buried. One good storm brings it up.',lat:-.32,d:.8,eyes:[[24,-12]],eye:'#ffd27a',draw:spadefoot},
  {id:'bufo',name:'Sonoran desert toad',sci:'Incilius alvarius',note:'Biggest toad in the Southwest. Do not lick.',lat:-1.2,d:.68,eyes:[[30,-18]],eye:'#ffcf6a',draw:bufo},
- {id:'rattle',name:'Mojave rattlesnake',sci:'Crotalus scutulatus',note:'Give it the whole road.',lat:-1.25,d:.5,eyes:[[62,-6]],eye:'#ffe2a0',draw:rattler},
- {id:'king',name:'Desert kingsnake',sci:'Lampropeltis splendida',note:'Eats rattlesnakes. Crosses on its own schedule.',lat:0,d:.42,eyes:[[60,-3]],eye:'#ffe2a0',draw:king,move:t=>{const p=(t/70)%1;return -1.3+2.6*p}},
- {id:'tar',name:'Desert tarantula',sci:'Aphonopelma chalcodes',note:'Males wander after the rains, looking for mates.',lat:.3,d:.9,eyes:[[10,-9],[13,-9]],eye:'#9ff0ff',draw:tarantula,move:t=>.3-.16*Math.sin(t/14)},
- {id:'shrimp',name:'Red-tailed fairy shrimp',sci:'Streptocephalus sealii',note:'Hatched days ago from cysts in the dust. Carnivore food.',lat:.9,d:.7,eyes:[[-20,-2],[18,3],[0,-6]],eye:'#cfe6ff',draw:puddle},
- {id:'poor',name:'Common poorwill',sci:'Phalaenoptilus nuttallii',note:'Sitting on warm asphalt. The eyeshine gives it away.',lat:.05,d:.25,eyes:[[9,-11]],eye:'#ff7a2e',draw:poorwill,strong:true,size:2.1},
+ {id:'rattle',name:'Black-tailed rattlesnake',sci:'Crotalus molossus',note:'That jet-black tail is the giveaway. A famously mellow rattlesnake, but still give it room.',lat:-1.25,d:.5,eyes:[[62,-6]],eye:'#ffe2a0',draw:rattler},
+ {id:'king',name:'Desert kingsnake',sci:'Lampropeltis splendida',note:'Resistant to rattlesnake venom, which is how it gets away with eating them.',lat:0,d:.42,eyes:[[60,-3]],eye:'#ffe2a0',draw:king,move:t=>{const p=(t/70)%1;return -1.3+2.6*p}},
+ {id:'tar',name:'Desert tarantula',sci:'Aphonopelma chalcodes',note:'Females can live 25+ years. The ones you meet on the road are males out looking for them.',lat:.3,d:.9,eyes:[[10,-9],[13,-9]],eye:'#9ff0ff',draw:tarantula,move:t=>.3-.16*Math.sin(t/14)},
+ {id:'shrimp',name:'Red-tailed fairy shrimp',sci:'Streptocephalus sealii',note:'Its eggs can wait years in dry mud for the right rain.',lat:.9,d:.7,eyes:[[-20,-2],[18,3],[0,-6]],eye:'#cfe6ff',draw:puddle},
+ {id:'gila',name:'Gila monster',sci:'Heloderma suspectum',note:'Venomous, slow, and underground most of its life. Seeing one is a lucky night.',lat:.72,d:.52,eyes:[[44,-7]],eye:'#ffb08a',draw:gila},
+ {id:'poor',name:'Common poorwill',sci:'Phalaenoptilus nuttallii',note:'The only bird known to hibernate.',lat:.05,d:.25,eyes:[[9,-11]],eye:'#ff7a2e',draw:poorwill,strong:true,size:2.1},
 ];
 animals.forEach(a=>{a.found=false;a.dwell=0;a.at=-99});
 
@@ -98,12 +99,27 @@ function eye(g,x,y,r,iris,vertical){g.fillStyle=iris;g.beginPath();g.arc(x,y,r,0
 function snakePts(t,len,waves,amp,speed){const pts=[];for(let k=0;k<=60;k++){const p=k/60;pts.push([-len/2+len*p,amp*Math.sin(p*TAU*waves-t*speed)*(.4+.6*p)])}return pts}
 function rattler(g,t){
   const pts=snakePts(t,130,1.4,14,.6);
-  for(let k=0;k<pts.length;k++){const p=k/60,r=2.5+6*Math.sin(Math.min(1,p*1.1)*Math.PI*.9);const[x,y]=pts[k];g.fillStyle=k%6<2?'#7d6a45':'#c8b78a';g.beginPath();g.arc(x,y,r,0,TAU);g.fill()}
-  const[hx,hy2]=pts[60];g.fillStyle='#b8a57a';g.beginPath();g.ellipse(hx+2,hy2,11,8,0,0,TAU);g.fill();
+  for(let k=0;k<pts.length;k++){const p=k/60,r=2.5+6*Math.sin(Math.min(1,p*1.1)*Math.PI*.9);const[x,y]=pts[k];g.fillStyle=k<14?'#141414':(k%6<2?'#3f3a22':'#a8a050');g.beginPath();g.arc(x,y,r,0,TAU);g.fill()}
+  const[hx,hy2]=pts[60];g.fillStyle='#9a9248';g.beginPath();g.ellipse(hx+2,hy2,11,8,0,0,TAU);g.fill();g.fillStyle='#2a2616';g.beginPath();g.ellipse(hx+3,hy2-1,9,3,0,0,TAU);g.fill();
   if((t%4)<.35){g.strokeStyle='#c0392b';g.lineWidth=1.5;g.beginPath();g.moveTo(hx+12,hy2);g.lineTo(hx+20,hy2-2);g.moveTo(hx+20,hy2-2);g.lineTo(hx+23,hy2-5);g.moveTo(hx+20,hy2-2);g.lineTo(hx+23,hy2+1);g.stroke()}
-  const[tx,ty]=pts[0];const j=Math.sin(t*70)*2;g.fillStyle='#d8c79d';for(let i=0;i<4;i++){g.beginPath();g.ellipse(tx-6-i*5+j,ty,3.5,3-i*.3,0,0,TAU);g.fill()}
+  const[tx,ty]=pts[0];const j=Math.sin(t*70)*2;g.fillStyle='#c9b98c';for(let i=0;i<4;i++){g.beginPath();g.ellipse(tx-6-i*5+j,ty,3.5,3-i*.3,0,0,TAU);g.fill()}
   g.strokeStyle='rgba(216,199,157,.35)';g.beginPath();g.moveTo(tx-26,ty-6);g.lineTo(tx-24,ty+6);g.stroke();
   g.fillStyle='#111';g.beginPath();g.arc(hx+5,hy2-3,1.6,0,TAU);g.fill();
+}
+function gila(g,t){
+  // chunky beaded lizard: black with pink-orange bands, fat tail, slow amble
+  const w=Math.sin(t*1.6)*3;
+  g.fillStyle='#1b1512';
+  [[-14,8,-1],[18,8,1],[-14,-8,1],[18,-8,-1]].forEach(([x,y,s])=>{g.beginPath();g.ellipse(x+s*w*.6,y+ (y>0?4:-4),4,6,0,0,TAU);g.fill()});
+  g.beginPath();g.moveTo(-26,-6);g.quadraticCurveTo(-52,-4+w,-66,2+w);g.quadraticCurveTo(-50,8+w,-26,7);g.fill(); // tail
+  g.beginPath();g.ellipse(0,0,30,11,0,0,TAU);g.fill(); // body
+  g.beginPath();g.ellipse(36,-2,14,9,0,0,TAU);g.fill(); // head
+  g.fillStyle='#e98a62';
+  [[-18,0,6,9],[-4,0,6,10],[10,0,6,10],[24,-1,4,7],[-38,1,4,5],[-50,2,3,4]].forEach(([x,y,rx,ry])=>{g.beginPath();g.ellipse(x,y,rx,ry,0,0,TAU);g.fill()});
+  g.fillStyle='rgba(255,210,180,.35)';for(let i=0;i<22;i++){g.beginPath();g.arc(-28+R(i+600)*60,-9+R(i+620)*18,1,0,TAU);g.fill()}
+  g.fillStyle='#e98a62';g.beginPath();g.ellipse(36,-4,6,4,0,0,TAU);g.fill();
+  g.fillStyle='#000';g.beginPath();g.arc(44,-7,1.8,0,TAU);g.fill();
+  if((t%5)<.4){g.strokeStyle='#3b2a4a';g.lineWidth=2;g.beginPath();g.moveTo(49,0);g.lineTo(57,-1);g.stroke()} // dark tongue flick
 }
 function king(g,t){
   const pts=snakePts(t,130,1.2,10,1.6);
