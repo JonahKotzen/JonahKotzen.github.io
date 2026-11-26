@@ -318,6 +318,15 @@ section{padding:80px 0;border-bottom:1px solid var(--line)}
 .pond-sec{margin-top:8px;border-top:1px solid var(--line)}
 nav ul a.nav-cv{color:var(--accent);border:1px solid var(--accent);padding:4px 10px;border-radius:999px}
 nav ul a.nav-cv:hover{background:var(--accent);color:var(--bg)}
+.join{margin-top:28px;display:grid;grid-template-columns:1fr auto;gap:24px 40px;align-items:end;padding:28px 30px;border:1px solid var(--accent);background:linear-gradient(135deg,var(--accent-soft),var(--paper))}
+.join .mono{color:var(--accent);margin:0 0 6px}
+.join h3{font-size:1.45rem;margin:0 0 16px;max-width:28ch}
+.join ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;counter-reset:j}
+.join li{counter-increment:j;position:relative;padding-left:38px}
+.join li::before{content:counter(j);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--bg);font:700 .85rem/26px var(--mono);text-align:center}
+.join li b{display:block;font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+.join li span{display:block;color:var(--muted);font-size:1rem;margin-top:2px}
+@media (max-width:760px){ .join{grid-template-columns:1fr} .join ol{grid-template-columns:1fr} }
 .glance{margin-top:28px;border:1px solid var(--line);background:var(--paper);padding:0 20px}
 .glance summary{cursor:pointer;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding:14px 0;list-style:none}
 .glance summary::-webkit-details-marker{display:none}
@@ -621,7 +630,7 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
   <div class="wrap">
     <div class="sec-head"><p class="mono">03 / Mentoring &amp; service</p><h2>Bringing people in</h2></div>
     <div class="body-col indent">
-      <p>The parts of science I enjoy most outside the data are the ones that connect people: bringing new students into research, and building the spaces where a department actually talks to itself.</p>
+      <p>Outside the data, my favorite part of science is bringing people in: walking undergrads through their first research projects, speaking up for grad students in the department, and getting the rest of campus excited about biodiversity.</p>
     </div>
     <div class="cards indent">
       <article class="card">
@@ -650,6 +659,17 @@ footer .fine{flex-basis:100%;font-family:var(--mono);font-size:.7rem;color:var(-
         <h3><a href="https://tarheels.live/ecoevodevolab/">D. Pfennig Lab website</a></h3>
         <p>I design and manage our lab's website, keeping our research, people and papers up to date for the public.</p>
       </article>
+    </div>
+    <div class="join indent">
+      <div>
+        <p class="mono">For UNC undergrads</p>
+        <h3>Interested in joining the D. Pfennig Lab and doing research with me?</h3>
+        <ol>
+          <li><b>Semester 1 · BIOL 395</b><span>Research for credit. You work with me on a project and write it up as a research paper.</span></li>
+          <li><b>Semester 2</b><span>We keep the research going and turn it into a poster.</span></li>
+        </ol>
+      </div>
+      <a class="btn" href="mailto:jkotzen@unc.edu?subject=Research%20in%20the%20D.%20Pfennig%20Lab">Email me · jkotzen@unc.edu</a>
     </div>
   </div>
 </section>
